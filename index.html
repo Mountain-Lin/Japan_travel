@@ -2,8 +2,15 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hello Kitty × 吉伊卡哇 10日行程表 (含自動匯率換算)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Hello Kitty × 吉伊卡哇 10日行程表</title>
+
+<!-- PWA 全螢幕 App 設定 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="關西10日遊">
+<meta name="theme-color" content="#ff85a2">
+
 <style>
   :root {
     --kitty-pink: #ff85a2;
@@ -16,17 +23,23 @@
     --accent-red: #d90429;
   }
 
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
-    font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang TC", "Microsoft JhengHei", sans-serif;
     background-color: #fff8fa;
     color: var(--text-color);
     margin: 0;
-    padding: 20px;
+    padding: 15px;
     padding-top: 110px;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
   }
 
   .container {
-    max-width: 1000px;
+    max-width: 920px;
     margin: 0 auto;
   }
 
@@ -36,25 +49,26 @@
     top: 0;
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(5px);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-bottom: 2px solid #ffd6e0;
-    padding: 10px 20px;
+    padding: 8px 12px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     z-index: 1000;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
   }
 
   .tool-group {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     background: #fff0f5;
-    padding: 5px 12px;
+    padding: 4px 10px;
     border-radius: 20px;
     border: 1px solid #ffd6e0;
   }
@@ -63,7 +77,7 @@
     background: var(--kitty-pink);
     color: white;
     border: none;
-    padding: 7px 15px;
+    padding: 8px 14px;
     border-radius: 20px;
     font-weight: bold;
     cursor: pointer;
@@ -72,9 +86,8 @@
     box-shadow: 0 2px 5px rgba(255, 133, 162, 0.3);
   }
 
-  .btn:hover {
-    background: #ff6b8b;
-    transform: translateY(-1px);
+  .btn:active {
+    transform: scale(0.96);
   }
 
   .btn-outline {
@@ -83,42 +96,57 @@
     border: 1.5px solid var(--kitty-pink);
   }
 
-  .btn-outline:hover {
-    background: var(--kitty-light-pink);
-  }
-
   .tool-btn {
     background: white;
     border: 1px solid #ff85a2;
     color: #4a4a4a;
-    padding: 4px 10px;
+    padding: 3px 8px;
     border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
-    font-size: 13px;
-  }
-
-  .tool-btn:hover {
-    background: #ffe5ec;
+    font-size: 12px;
   }
 
   .color-label {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: bold;
     color: #800f2f;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     cursor: pointer;
   }
 
   .color-picker {
     border: none;
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     cursor: pointer;
     background: transparent;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    background: linear-gradient(135deg, #ffb3c6 0%, #ff85a2 50%, #b5e2fa 100%);
+    border-radius: 16px;
+    padding: 20px 15px;
+    color: white;
+    box-shadow: 0 6px 15px rgba(255, 133, 162, 0.25);
+    margin-bottom: 15px;
+  }
+
+  .header h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 0.5px;
+  }
+
+  .header p {
+    margin: 6px 0 0;
+    font-size: 13px;
+    opacity: 0.95;
   }
 
   /* 總預算與匯率控制面板 */
@@ -126,34 +154,34 @@
     background: linear-gradient(135deg, #e0f2fe 0%, #fce7f3 100%);
     border: 2px solid #b5e2fa;
     border-radius: 16px;
-    padding: 15px 20px;
-    margin-bottom: 20px;
+    padding: 12px 16px;
+    margin-bottom: 15px;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    gap: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    gap: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
   }
 
   .budget-total-box {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
 
   .total-title {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     color: #0077b6;
   }
 
   .total-amount {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 800;
     color: #d90429;
     background: white;
-    padding: 4px 15px;
+    padding: 4px 12px;
     border-radius: 12px;
     border: 1.5px solid #ff85a2;
   }
@@ -161,47 +189,40 @@
   .rate-control-box {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     background: rgba(255, 255, 255, 0.9);
-    padding: 6px 12px;
+    padding: 5px 10px;
     border-radius: 12px;
     font-size: 13px;
     border: 1px solid #a0c4ff;
   }
 
   .rate-input {
-    width: 60px;
-    padding: 4px 6px;
+    width: 58px;
+    padding: 4px;
     border: 1px solid #a0c4ff;
     border-radius: 6px;
     font-weight: bold;
     text-align: center;
+    font-size: 16px; /* 防 iOS 自動放大 */
   }
 
   .btn-rate-calc {
     background: #0077b6;
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 6px 10px;
     border-radius: 6px;
     font-size: 12px;
     font-weight: bold;
     cursor: pointer;
   }
 
-  .btn-rate-calc:hover {
-    background: #023e8a;
-  }
-
   /* 可編輯區域 */
   [contenteditable="true"] {
     outline: none;
     border-radius: 4px;
-    transition: background-color 0.2s;
-  }
-
-  [contenteditable="true"]:hover {
-    background-color: #fff0f5;
+    padding: 2px 4px;
   }
 
   [contenteditable="true"]:focus {
@@ -209,53 +230,64 @@
     box-shadow: 0 0 0 2px #ff85a2;
   }
 
-  .header {
-    text-align: center;
-    background: linear-gradient(135deg, #ffb3c6 0%, #ff85a2 50%, #b5e2fa 100%);
-    border-radius: 20px;
-    padding: 25px 20px;
-    color: white;
-    box-shadow: 0 8px 15px rgba(255, 133, 162, 0.3);
+  /* 固定支出 */
+  .fixed-budget {
+    background: #eefcff;
+    border: 2px solid #b5e2fa;
+    border-radius: 16px;
+    padding: 12px 16px;
     margin-bottom: 20px;
   }
 
-  .header h1 {
-    margin: 0;
-    font-size: 28px;
-    letter-spacing: 1px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.15);
+  .fixed-budget h3 {
+    margin: 0 0 10px 0;
+    color: #0077b6;
+    font-size: 15px;
   }
 
-  .header p {
-    margin: 8px 0 0;
-    font-size: 15px;
-    opacity: 0.95;
+  .fixed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  .fixed-item {
+    background: white;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid #d8f3dc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
   }
 
   .section-title {
     background: #ff85a2;
     color: white;
-    padding: 8px 18px;
+    padding: 6px 16px;
     border-radius: 20px;
     display: inline-block;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
-    margin: 20px 0 15px 0;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin: 15px 0 10px 0;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05);
   }
 
   .day-card {
     background: var(--card-bg);
     border-radius: 16px;
     border: 2px solid #ffd6e0;
-    margin-bottom: 20px;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.04);
+    margin-bottom: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
     overflow: hidden;
   }
 
   .day-header {
-    padding: 12px 20px;
-    font-size: 16px;
+    padding: 10px 15px;
+    font-size: 15px;
     font-weight: bold;
     display: flex;
     justify-content: space-between;
@@ -273,41 +305,38 @@
   }
 
   .day-tag {
-    font-size: 13px;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 3px 10px;
-    border-radius: 12px;
+    font-size: 12px;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 2px 8px;
+    border-radius: 10px;
   }
 
+  /* 傳統電腦版 Table */
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: 13px;
   }
 
   th {
     background-color: #fff0f3;
     color: #800f2f;
-    padding: 10px 12px;
+    padding: 8px 10px;
     text-align: left;
     font-weight: 600;
     border-bottom: 2px solid #ffe5ec;
   }
 
   td {
-    padding: 10px 12px;
+    padding: 8px 10px;
     border-bottom: 1px dashed #ffe5ec;
     vertical-align: middle;
   }
 
-  tr:last-child td {
-    border-bottom: none;
-  }
-
-  .col-type { width: 10%; font-weight: bold; }
-  .col-detail { width: 34%; }
-  .col-cost { width: 32%; }
-  .col-note { width: 19%; color: #666; font-size: 13px; }
+  .col-type { width: 12%; font-weight: bold; }
+  .col-detail { width: 32%; }
+  .col-cost { width: 33%; }
+  .col-note { width: 18%; color: #666; font-size: 12px; }
   .col-action { width: 5%; text-align: center; }
 
   /* 雙貨幣輸入組合框 */
@@ -330,14 +359,14 @@
     font-size: 11px;
     font-weight: bold;
     color: #a4133c;
-    margin-right: 3px;
+    margin-right: 2px;
   }
 
   .cost-input {
-    width: 62px;
+    width: 58px;
     border: none;
     background: transparent;
-    font-size: 13px;
+    font-size: 16px; /* 防 iOS 自動放大 */
     font-weight: bold;
     color: #4a4a4a;
     outline: none;
@@ -348,93 +377,51 @@
     color: white;
     border: none;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     font-size: 11px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: transform 0.1s;
-  }
-
-  .convert-row-btn:hover {
-    transform: scale(1.15);
-    background: #ff4d6d;
   }
 
   .badge-kitty {
     background-color: #ffccd5;
     color: #a4133c;
-    padding: 2px 6px;
+    padding: 2px 5px;
     border-radius: 4px;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .badge-chiikawa {
     background-color: #e2ece9;
     color: #2a9d8f;
-    padding: 2px 6px;
+    padding: 2px 5px;
     border-radius: 4px;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .badge-reserve {
     background-color: #ff4d6d;
     color: white;
-    padding: 2px 6px;
+    padding: 2px 5px;
     border-radius: 4px;
     font-size: 11px;
     font-weight: bold;
   }
 
-  .link-btn {
-    color: #0077b6;
-    text-decoration: none;
-    font-weight: bold;
-  }
-
-  .fixed-budget {
-    background: #eefcff;
-    border: 2px solid #b5e2fa;
-    border-radius: 16px;
-    padding: 15px 20px;
-    margin-bottom: 25px;
-  }
-
-  .fixed-budget h3 {
-    margin-top: 0;
-    color: #0077b6;
-    font-size: 16px;
-  }
-
-  .fixed-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 10px;
-    font-size: 14px;
-  }
-
-  .fixed-item {
-    background: white;
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid #d8f3dc;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
   .del-row-btn {
     color: #ff4d6d;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
     background: none;
     border: none;
+    padding: 2px 8px;
   }
 
   .add-row-container {
@@ -448,20 +435,96 @@
     border: 1px dashed #ff85a2;
     color: #ff85a2;
     border-radius: 12px;
-    padding: 4px 12px;
+    padding: 6px 16px;
     font-size: 12px;
     cursor: pointer;
+    font-weight: bold;
   }
 
-  .add-row-btn:hover {
-    background: #ffe5ec;
+  /* 📱 手機版專屬響應式優化 (Mobile Responsive Card Layout) */
+  @media (max-width: 768px) {
+    body {
+      padding-top: 125px;
+    }
+
+    .toolbar {
+      padding: 6px 8px;
+    }
+
+    .btn {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    /* 把 Table 轉換成直立式 Card 排版 */
+    table, thead, tbody, th, td, tr {
+      display: block;
+    }
+
+    thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+
+    tr {
+      background: #ffffff;
+      border: 1px solid #ffe5ec;
+      border-radius: 12px;
+      margin: 10px;
+      padding: 10px 12px;
+      position: relative;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    }
+
+    td {
+      border-bottom: none !important;
+      padding: 3px 0 !important;
+      width: 100% !important;
+    }
+
+    .col-type {
+      font-size: 13px;
+      color: #ff85a2;
+    }
+
+    .col-detail {
+      font-size: 15px;
+      font-weight: bold;
+      margin: 2px 0;
+    }
+
+    .col-cost {
+      margin-top: 6px;
+      background: #fff8fa;
+      padding: 6px !important;
+      border-radius: 8px;
+    }
+
+    .col-note {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .col-action {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+    }
+
+    .cost-box {
+      justify-content: flex-start;
+    }
+
+    .cost-input {
+      width: 68px;
+    }
   }
 
   @media print {
     body { padding-top: 0; background: white; }
     .toolbar, .col-action, .add-row-container, .del-row-btn, .convert-row-btn { display: none !important; }
     .day-card { break-inside: avoid; border-color: #ccc; }
-    .cost-input { border: none; }
   }
 </style>
 </head>
@@ -470,20 +533,19 @@
 <!-- 頂部控制欄 -->
 <div class="toolbar">
   <button class="btn" onclick="saveData()">💾 儲存所有修改</button>
-  <button class="btn btn-outline" onclick="window.print()">🖨️ 列印 / 轉存 PDF</button>
-  <button class="btn btn-outline" onclick="resetData()" style="color: #666; border-color: #ccc;">🔄 重置成預設版</button>
+  <button class="btn btn-outline" onclick="window.print()">🖨️ 列印 / PDF</button>
+  <button class="btn btn-outline" onclick="resetData()" style="color: #666; border-color: #ccc;">🔄 重置</button>
 
   <div class="tool-group">
     <button class="tool-btn" onclick="execCmd('bold')" title="粗體"><b>B</b></button>
-    <label class="color-label" title="更改文字顏色">
-      🔤 字體色
+    <label class="color-label" title="字體色">
+      🔤
       <input type="color" class="color-picker" onchange="execCmd('foreColor', this.value)" value="#ff85a2">
     </label>
-    <label class="color-label" title="塗上螢光筆/底色">
-      🖍️ 底色
+    <label class="color-label" title="底色">
+      🖍️
       <input type="color" class="color-picker" onchange="execCmd('hiliteColor', this.value)" value="#fff3a8">
     </label>
-    <button class="tool-btn" onclick="execCmd('removeFormat')" title="清除格式">🧹 清除格式</button>
   </div>
 </div>
 
@@ -491,7 +553,7 @@
 
   <!-- Header -->
   <div class="header">
-    <h1 contenteditable="true">🎀 Hello Kitty × 吉伊卡哇 (Chiikawa) 10日行程表 🎀</h1>
+    <h1 contenteditable="true">🎀 Hello Kitty × 吉伊卡哇 10日行程表 🎀</h1>
     <p contenteditable="true">冬日關西蜜月／雙主角採買／和牛溫泉玩雪之旅</p>
   </div>
 
@@ -502,9 +564,9 @@
       <span class="total-amount" id="grand-total-twd">NT$ 0</span>
     </div>
     <div class="rate-control-box">
-      <label><b>目前參考匯率：</b></label>
+      <label><b>匯率：</b></label>
       <input type="number" id="global-rate" class="rate-input" value="0.22" step="0.001" oninput="convertAllByRate()">
-      <button class="btn-rate-calc" onclick="convertAllByRate()">🔄 依匯率全頁一鍵換算</button>
+      <button class="btn-rate-calc" onclick="convertAllByRate()">🔄 全頁換算</button>
     </div>
   </div>
 
@@ -541,7 +603,7 @@
     </div>
   </div>
 
-  <div class="section-title">📍 Part 1：大阪篇 (Day 1 - Day 5) ｜ Base：大阪本町</div>
+  <div class="section-title">📍 Part 1：大阪篇 (Day 1 - Day 5) ｜ Base：大阪本町 / 有馬溫泉</div>
 
   <!-- Day 1 -->
   <div class="day-card">
@@ -560,7 +622,7 @@
           <td class="col-cost">
             <div class="cost-box">
               <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="4400" oninput="autoConvertRow(this)"></div>
-              <button class="convert-row-btn" onclick="autoConvertRow(this)" title="換算台幣">➔</button>
+              <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
               <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="968" oninput="updateGrandTotal()"></div>
             </div>
           </td>
@@ -573,7 +635,7 @@
           <td class="col-cost">
             <div class="cost-box">
               <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="2000" oninput="autoConvertRow(this)"></div>
-              <button class="convert-row-btn" onclick="autoConvertRow(this)" title="換算台幣">➔</button>
+              <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
               <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="440" oninput="updateGrandTotal()"></div>
             </div>
           </td>
@@ -586,7 +648,7 @@
           <td class="col-cost">
             <div class="cost-box">
               <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
-              <button class="convert-row-btn" onclick="autoConvertRow(this)" title="換算台幣">➔</button>
+              <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
               <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="3500" oninput="updateGrandTotal()"></div>
             </div>
           </td>
@@ -599,7 +661,7 @@
           <td class="col-cost">
             <div class="cost-box">
               <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
-              <button class="convert-row-btn" onclick="autoConvertRow(this)" title="換算台幣">➔</button>
+              <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
               <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="3000" oninput="updateGrandTotal()"></div>
             </div>
           </td>
@@ -632,20 +694,7 @@
               <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="1100" oninput="updateGrandTotal()"></div>
             </div>
           </td>
-          <td class="col-note" contenteditable="true">大阪特色咖啡廳早餐 (2人)</td>
-          <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-        </tr>
-        <tr>
-          <td class="col-type" contenteditable="true">交通</td>
-          <td class="col-detail" contenteditable="true">C3. ICOCA 卡/地鐵 (1天通勤)</td>
-          <td class="col-cost">
-            <div class="cost-box">
-              <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="2000" oninput="autoConvertRow(this)"></div>
-              <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-              <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="440" oninput="updateGrandTotal()"></div>
-            </div>
-          </td>
-          <td class="col-note" contenteditable="true">黑門、心齋橋、梅田移動 (2人)</td>
+          <td class="col-note" contenteditable="true">特色咖啡廳早餐 (2人)</td>
           <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
         </tr>
         <tr>
@@ -658,20 +707,7 @@
               <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="440" oninput="updateGrandTotal()"></div>
             </div>
           </td>
-          <td class="col-note" contenteditable="true"><span class="badge-kitty">Sanrio Gallery</span> & <span class="badge-chiikawa">Chiikawa Land 梅田旗艦店</span></td>
-          <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-        </tr>
-        <tr>
-          <td class="col-type" contenteditable="true">住宿</td>
-          <td class="col-detail" contenteditable="true">B2. 大阪飯店 (2nd Night)</td>
-          <td class="col-cost">
-            <div class="cost-box">
-              <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
-              <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-              <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="3500" oninput="updateGrandTotal()"></div>
-            </div>
-          </td>
-          <td class="col-note" contenteditable="true">本町飯店 (1晚)</td>
+          <td class="col-note" contenteditable="true"><span class="badge-kitty">Sanrio Gallery</span> & <span class="badge-chiikawa">Chiikawa Land 梅田</span></td>
           <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
         </tr>
         <tr>
@@ -713,7 +749,7 @@
               <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="8800" oninput="updateGrandTotal()"></div>
             </div>
           </td>
-          <td class="col-note" contenteditable="true">不含門票，帶領無腦玩 10-12 項設施</td>
+          <td class="col-note" contenteditable="true">不含門票，帶領暢玩設施</td>
           <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
         </tr>
         <tr>
@@ -726,59 +762,7 @@
               <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="5280" oninput="updateGrandTotal()"></div>
             </div>
           </td>
-          <td class="col-note" contenteditable="true"><span class="badge-reserve">關鍵預約</span> 包含超級任天堂世界</td>
-          <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-        </tr>
-        <tr>
-          <td class="col-type" contenteditable="true">交通</td>
-          <td class="col-detail" contenteditable="true">C4. JR 往返 USJ</td>
-          <td class="col-cost">
-            <div class="cost-box">
-              <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
-              <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-              <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="3000" oninput="updateGrandTotal()"></div>
-            </div>
-          </td>
-          <td class="col-note" contenteditable="true">本町 - 大阪 - 環球影城往返 (2人)</td>
-          <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-        </tr>
-        <tr>
-          <td class="col-type" contenteditable="true">飲食</td>
-          <td class="col-detail" contenteditable="true">E4. USJ 園區內餐飲/點心</td>
-          <td class="col-cost">
-            <div class="cost-box">
-              <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
-              <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-              <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="3000" oninput="updateGrandTotal()"></div>
-            </div>
-          </td>
-          <td class="col-note" contenteditable="true"><span class="badge-kitty">Hello Kitty 時尚大道</span> 限定餐點 (2人)</td>
-          <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-        </tr>
-        <tr>
-          <td class="col-type" contenteditable="true">住宿</td>
-          <td class="col-detail" contenteditable="true">B3. 大阪飯店 (3rd Night)</td>
-          <td class="col-cost">
-            <div class="cost-box">
-              <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
-              <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-              <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="3500" oninput="updateGrandTotal()"></div>
-            </div>
-          </td>
-          <td class="col-note" contenteditable="true">本町飯店 (1晚)</td>
-          <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-        </tr>
-        <tr>
-          <td class="col-type" contenteditable="true">飲食</td>
-          <td class="col-detail" contenteditable="true">E5. USJ 步行街/拉麵晚餐</td>
-          <td class="col-cost">
-            <div class="cost-box">
-              <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
-              <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-              <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="1000" oninput="updateGrandTotal()"></div>
-            </div>
-          </td>
-          <td class="col-note" contenteditable="true">出園後輕鬆享用拉麵 (2人)</td>
+          <td class="col-note" contenteditable="true"><span class="badge-reserve">關鍵預約</span> 含超級任天堂世界</td>
           <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
         </tr>
       </tbody>
@@ -798,21 +782,8 @@
       </thead>
       <tbody>
         <tr>
-          <td class="col-type" contenteditable="true">交通</td>
-          <td class="col-detail" contenteditable="true">C5. ICOCA 卡/地鐵 (奈良往返)</td>
-          <td class="col-cost">
-            <div class="cost-box">
-              <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="3000" oninput="autoConvertRow(this)"></div>
-              <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-              <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="660" oninput="updateGrandTotal()"></div>
-            </div>
-          </td>
-          <td class="col-note" contenteditable="true">搭乘近鐵/JR往返奈良 (2人)</td>
-          <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-        </tr>
-        <tr>
           <td class="col-type" contenteditable="true">遊玩體驗</td>
-          <td class="col-detail" contenteditable="true">D4. 鹿饼乾 & D5. 東大寺門票</td>
+          <td class="col-detail" contenteditable="true">D4. 鹿餅乾 & 東大寺門票</td>
           <td class="col-cost">
             <div class="cost-box">
               <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="3400" oninput="autoConvertRow(this)"></div>
@@ -820,33 +791,7 @@
               <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="748" oninput="updateGrandTotal()"></div>
             </div>
           </td>
-          <td class="col-note" contenteditable="true">餵小鹿（吉伊卡哇實體化！）(2人)</td>
-          <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-        </tr>
-        <tr>
-          <td class="col-type" contenteditable="true">住宿</td>
-          <td class="col-detail" contenteditable="true">B4. 大阪飯店 (4th Night)</td>
-          <td class="col-cost">
-            <div class="cost-box">
-              <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
-              <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-              <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="3500" oninput="updateGrandTotal()"></div>
-            </div>
-          </td>
-          <td class="col-note" contenteditable="true">本町飯店 (1晚)</td>
-          <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-        </tr>
-        <tr>
-          <td class="col-type" contenteditable="true">飲食</td>
-          <td class="col-detail" contenteditable="true">E6. 藥妝補貨後 / 道頓堀拉麵</td>
-          <td class="col-cost">
-            <div class="cost-box">
-              <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
-              <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-              <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="5000" oninput="updateGrandTotal()"></div>
-            </div>
-          </td>
-          <td class="col-note" contenteditable="true">心齋橋/難波商圈補貨晚餐 (2人)</td>
+          <td class="col-note" contenteditable="true">餵小鹿 (吉伊卡哇實體化！)</td>
           <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
         </tr>
       </tbody>
@@ -1253,6 +1198,7 @@
 
 </div>
 
+<!-- JavaScript 互動功能 -->
 <script>
   // 獲取當前設定匯率
   function getRate() {
@@ -1266,7 +1212,7 @@
     if (!costBox) return;
     const jpyInput = costBox.querySelector('.jpy-val');
     const twdInput = costBox.querySelector('.twd-val');
-    
+
     if (jpyInput && twdInput && jpyInput.value !== '') {
       const jpy = parseFloat(jpyInput.value);
       if (!isNaN(jpy)) {
@@ -1301,10 +1247,10 @@
         total += val;
       }
     });
-    document.getElementById('grand-total-twd').innerText = 'NT$ ' + total.toLocaleString();
+    document.getElementById('grand-total-twd').innerText = 'NT$ ' + Math.round(total).toLocaleString('zh-TW');
   }
 
-  // 編輯文字指令
+  // 富文本編輯指令
   function execCmd(command, value = null) {
     document.execCommand(command, false, value);
   }
@@ -1312,8 +1258,10 @@
   // 刪除列
   function deleteRow(btn) {
     const row = btn.closest('tr');
-    row.remove();
-    updateGrandTotal();
+    if (row) {
+      row.remove();
+      updateGrandTotal();
+    }
   }
 
   // 新增列
@@ -1334,32 +1282,39 @@
       <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
     `;
     tableBody.appendChild(newRow);
+    updateGrandTotal();
   }
 
-  // 儲存所有資料 (包含輸入框數值與顏色)
+  // 儲存所有資料 (包含輸入框數值與修改)
   function saveData() {
-    // 儲存前先將 input 的 current value 寫入 DOM 屬性，確保 HTML 能完整存下
     document.querySelectorAll('input').forEach(input => {
       input.setAttribute('value', input.value);
     });
     const content = document.getElementById('itinerary-content').innerHTML;
     localStorage.setItem('kitty_chiikawa_calc_itinerary', content);
-    alert('✨ 所有修改、金額與匯率已成功儲存！');
+    localStorage.setItem('kitty_chiikawa_rate', document.getElementById('global-rate').value);
+    alert('✨ 10 日行程所有修改、預算與匯率已成功儲存！');
   }
 
   // 載入已儲存資料
   function loadData() {
     const savedContent = localStorage.getItem('kitty_chiikawa_calc_itinerary');
+    const savedRate = localStorage.getItem('kitty_chiikawa_rate');
+
     if (savedContent) {
       document.getElementById('itinerary-content').innerHTML = savedContent;
+    }
+    if (savedRate) {
+      document.getElementById('global-rate').value = savedRate;
     }
     updateGrandTotal();
   }
 
   // 重置資料
   function resetData() {
-    if (confirm('確定要恢復成預設內容嗎？自訂的金額與樣式將會重置。')) {
+    if (confirm('確定要恢復成預設內容嗎？自訂的金額與修改將會重置。')) {
       localStorage.removeItem('kitty_chiikawa_calc_itinerary');
+      localStorage.removeItem('kitty_chiikawa_rate');
       location.reload();
     }
   }
