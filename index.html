@@ -1322,17 +1322,18 @@
   window.onload = loadData;
 </script>
 
-<script>
-console.log("HTML JS 測試成功");
-</script>
-
 <script type="module">
 
 // Firebase SDK
 import { initializeApp } 
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
 
-import { getDatabase, ref, set }
+import {
+ getDatabase,
+ ref,
+ set,
+ get
+ }
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
 
 
@@ -1356,19 +1357,26 @@ const db = getDatabase(app);
 
 console.log("Firebase 初始化成功");
 
+// 測試讀取 Firebase
+async function loadFirebase(){
 
-// 寫入測試資料
-set(ref(db, "test/web"), {
-  message: "Hello from Japan Travel",
-  time: new Date().toLocaleString()
-})
-.then(() => {
-  console.log("Firebase 寫入成功");
-})
-.catch((error) => {
-  console.error("Firebase 寫入失敗", error);
-});
+  const snapshot = await get(ref(db,"japan_travel"));
 
+  if(snapshot.exists()){
+
+    console.log("Firebase 行程資料:");
+    console.log(snapshot.val());
+
+  }else{
+
+    console.log("Firebase 目前沒有 japan_travel 資料");
+
+  }
+
+}
+
+
+loadFirebase();
 
 </script>
 
