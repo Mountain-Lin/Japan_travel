@@ -530,10 +530,6 @@
 </head>
 <body>
 
-<div id="firebaseTest">
-  Firebase 載入中...
-</div>
-
 <!-- 頂部控制欄 -->
 <div class="toolbar">
   <button class="btn" onclick="saveData()">💾 儲存所有修改</button>
@@ -1370,26 +1366,6 @@ async function loadFirebase(){
 
     console.log("Firebase 行程資料:");
     console.log(snapshot.val());
-	
-	const data = snapshot.val();
-
-let html = "";
-
-Object.keys(data).forEach(day => {
-
-  html += `
-    <div>
-      <h3>${day}</h3>
-      <p>日期：${data[day].date}</p>
-      <p>地點：${data[day].place}</p>
-      <p>備註：${data[day].memo}</p>
-    </div>
-  `;
-
-});
-
-
-document.getElementById("firebaseTest").innerHTML = html;
 
   }else{
 
