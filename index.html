@@ -1368,44 +1368,32 @@ async function loadFirebase(){
 
   if(snapshot.exists()){
 
-    const travelData = snapshot.val();
-
     console.log("Firebase 行程資料:");
-    console.log(travelData);
+    console.log(snapshot.val());
+	
+	const data = snapshot.val();
+
+let html = "";
+
+Object.keys(data).forEach(day => {
+
+  html += `
+    <div>
+      <h3>${day}</h3>
+      <p>日期：${data[day].date}</p>
+      <p>地點：${data[day].place}</p>
+      <p>備註：${data[day].memo}</p>
+    </div>
+  `;
+
+});
 
 
-    let html = "";
-
-
-    Object.keys(travelData).forEach(day=>{
-
-      const item = travelData[day];
-
-
-      html += `
-      <div class="day-card">
-
-        <h3>${day}</h3>
-
-        <p>📅 日期：${item.date}</p>
-
-        <p>📍 地點：${item.place}</p>
-
-        <p>📝 備註：${item.memo}</p>
-
-      </div>
-      `;
-
-    });
-
-
-    document.getElementById("firebaseTrip")
-    .innerHTML = html;
-
+document.getElementById("firebaseTest").innerHTML = html;
 
   }else{
 
-    console.log("Firebase 沒有資料");
+    console.log("Firebase 目前沒有 japan_travel 資料");
 
   }
 
@@ -1415,15 +1403,6 @@ async function loadFirebase(){
 loadFirebase();
 
 </script>
-
-</body>
-<body>
-
-<h1>Japan Travel</h1>
-
-
-<div id="firebaseTrip"></div>
-
 
 </body>
 </html>
