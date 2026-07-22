@@ -1321,77 +1321,8 @@
 
   window.onload = loadData;
 </script>
-<script type="module">
-
-// Firebase SDK
-import { initializeApp } 
-from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-
-import { 
-  getDatabase,
-  ref,
-  get
-} 
-from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
-
-
-// Firebase 設定
-const firebaseConfig = {
-  apiKey: "AIzaSyBae8XMFtZJiT51DjqqOcfNF2DeNUw9lOc",
-
-  authDomain: "travel-sync-54836.firebaseapp.com",
-
-  databaseURL: "https://travel-sync-54836-default-rtdb.asia-southeast1.firebasedatabase.app",
-
-  projectId: "travel-sync-54836",
-
-  storageBucket: "travel-sync-54836.firebasestorage.app",
-
-  messagingSenderId: "788264955445",
-
-  appId: "1:788264955445:web:d00c5caa0bc6695f264b7c"
-};
-
-
-// 初始化 Firebase
-const app = initializeApp(firebaseConfig);
-
-
-// 連接 Realtime Database
-const database = getDatabase(app);
-
-
-// 測試讀取 test/message
-const testRef = ref(database, "test/message");
-
-
-get(testRef)
-.then((snapshot)=>{
-
-    if(snapshot.exists()){
-
-        console.log(
-          "Firebase資料:",
-          snapshot.val()
-        );
-
-    }else{
-
-        console.log("沒有資料");
-
-    }
-
-})
-.catch((error)=>{
-
-    console.error(
-      "Firebase錯誤:",
-      error
-    );
-
-});
-
-
+<script>
+console.log("HTML JS 測試成功");
 </script>
 </body>
 </html>
