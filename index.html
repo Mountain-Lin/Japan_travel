@@ -1322,41 +1322,6 @@
   window.onload = loadData;
 </script>
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-
-import {
-    getDatabase,
-    ref,
-    set
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
-
-// Firebase 設定
-const firebaseConfig = {
-    apiKey: "AIzaSyBae8XMFtZJiT51DjqqOcfNF2DeNUw9lOc",
-    authDomain: "travel-sync-54836.firebaseapp.com",
-    databaseURL: "https://travel-sync-54836-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "travel-sync-54836",
-    storageBucket: "travel-sync-54836.firebasestorage.app",
-    messagingSenderId: "788264955445",
-    appId: "1:788264955445:web:d00c5caa0bc6695f264b7c"
-};
-
-// 初始化
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-// 寫入測試資料
-set(ref(db, "test"), {
-    message: "Hello Firebase!",
-    time: new Date().toLocaleString()
-}).then(() => {
-    console.log("Firebase 寫入成功！");
-}).catch((error) => {
-    console.error("Firebase 錯誤：", error);
-});
-</script>
-</body>
-<script type="module">
 
 // Firebase SDK
 import { initializeApp } 
@@ -1428,4 +1393,5 @@ get(testRef)
 
 
 </script>
+</body>
 </html>
