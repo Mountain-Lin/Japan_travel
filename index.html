@@ -845,7 +845,7 @@
           itemsHtml += `
             <tr draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropItem(event)" ondragend="dragEnd(event)">
               <td class="col-handle" data-label="排序">
-                <span class="drag-handle" title="按住拖曳移動項目">☰ 移動</span>
+                <span class="drag-handle" title="按住拖曳移動項目">☰</span>
               </td>
               <td class="col-type" data-label="類別">${renderCategorySelect(item.type || '交通')}</td>
               <td class="col-detail" data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', item.detail || '', '細項 / 規劃')}</td>
@@ -1058,7 +1058,7 @@
 
     tr.innerHTML = `
       <td class="col-handle" data-label="排序">
-        <span class="drag-handle" title="按住拖曳移動項目">☰ 移動</span>
+        <span class="drag-handle" title="按住拖曳移動項目">☰</span>
       </td>
       <td class="col-type" data-label="類別">${renderCategorySelect('交通')}</td>
       <td class="col-detail" data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', '新項目', '細項 / 規劃')}</td>
@@ -1111,7 +1111,7 @@
         <tbody>
           <tr draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropItem(event)" ondragend="dragEnd(event)">
             <td class="col-handle" data-label="排序">
-              <span class="drag-handle" title="按住拖曳移動項目">☰ 移動</span>
+              <span class="drag-handle" title="按住拖曳移動項目">☰</span>
             </td>
             <td class="col-type" data-label="類別">${renderCategorySelect('交通')}</td>
             <td class="col-detail" data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', '新項目', '細項 / 規劃')}</td>
