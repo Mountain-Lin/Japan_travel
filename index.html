@@ -1290,15 +1290,23 @@
   }
 
   // 儲存所有資料 (包含輸入框數值與修改)
-  function saveData() {
-    document.querySelectorAll('input').forEach(input => {
-      input.setAttribute('value', input.value);
-    });
-    const content = document.getElementById('itinerary-content').innerHTML;
-    localStorage.setItem('kitty_chiikawa_calc_itinerary', content);
-    localStorage.setItem('kitty_chiikawa_rate', document.getElementById('global-rate').value);
-    alert('✨ 10 日行程所有修改、預算與匯率已成功儲存！');
-  }
+async function saveData(){
+
+
+const html =
+document.getElementById("itinerary-content").innerHTML;
+
+
+await set(
+ref(db,"japan_travel/html"),
+html
+);
+
+
+alert("已同步到另一台裝置");
+
+
+}
 
   // 載入已儲存資料
   function loadData() {
@@ -1336,7 +1344,8 @@ import {
  getDatabase,
  ref,
  set,
- get
+ get,
+ onValue
  }
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
 
@@ -1404,6 +1413,39 @@ async function loadFirebase(){
 // ⭐ 加這行
 loadFirebase();
 
+syncFirebase();
+
+
+// Firebase 即時同步讀取
+function syncFirebase(){
+
+  const tripRef = ref(db,"japan_travel/html");
+
+
+  onValue(tripRef,(snapshot)=>{
+
+
+    if(snapshot.exists()){
+
+      const html = snapshot.val();
+
+
+      document
+      .getElementById("itinerary-content")
+      .innerHTML = html;
+
+
+      console.log("同步完成");
+
+
+      updateGrandTotal();
+
+    }
+
+
+  });
+
+}
 </script>
 
 </body>
