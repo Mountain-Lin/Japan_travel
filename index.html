@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>日本行程與預算管理 (超連結優化版)</title>
+  <title>日本行程規劃與預算管理</title>
   <style>
     /* ================= 櫻花粉白系質感與風格設定 ================= */
     :root {
@@ -36,19 +36,24 @@
       padding: 10px;
     }
 
-    /* 頂部控制面板 */
+    /* 頂部控制面板 (固定置頂) */
     .top-panel {
-      background: var(--card-bg);
+      position: sticky;
+      top: 10px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border: 1px solid var(--border-color);
       border-radius: 16px;
-      padding: 20px;
+      padding: 15px 20px;
       margin-bottom: 25px;
       display: flex;
       flex-wrap: wrap;
       gap: 15px;
       justify-content: space-between;
       align-items: center;
-      box-shadow: var(--glow-shadow);
+      box-shadow: 0 8px 30px rgba(255, 117, 140, 0.18);
     }
 
     .budget-summary {
@@ -235,6 +240,12 @@
       gap: 6px;
     }
 
+    .note-preview-area {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
     .link-badge {
       display: inline-flex;
       align-items: center;
@@ -333,9 +344,9 @@
       flex-wrap: wrap;
     }
 
-    /* 響應式手機優化 (修復文字直排斷行問題) */
+    /* 響應式手機優化 */
     @media (max-width: 768px) {
-      .top-panel { flex-direction: column; align-items: stretch; }
+      .top-panel { flex-direction: column; align-items: stretch; padding: 12px 15px; }
       .control-group { justify-content: space-between; }
       table, thead, tbody, th, td, tr { display: block; width: 100%; box-sizing: border-box; }
       thead { display: none; }
@@ -353,7 +364,6 @@
         justify-content: space-between; 
         align-items: center; 
       }
-      /* 使用正常橫向排列標籤，避免直排斷行 */
       td::before { 
         content: attr(data-label); 
         color: var(--text-muted); 
@@ -371,7 +381,7 @@
 
 <div class="container">
 
-  <!-- 頂部控制面板 -->
+  <!-- 頂部控制面板 (已設定黏性置頂) -->
   <div class="top-panel">
     <div class="budget-summary">
       🌸 總預算估算：<span id="grand-total-twd">NT$ 0</span>
@@ -405,7 +415,7 @@
             title: "Day 1 抵達與市區漫步",
             base: "札幌車站周邊",
             items: {
-              item1: { type: "交通", detail: "機場快線車票", jpy: 1150, note: "https://maps.app.goo.gl/example" }
+              item1: { type: "交通", detail: "機場快線車票", jpy: 1150, note: "https://maps.app.goo.gl/example https://www.booking.com/example" }
             }
           }
         }
@@ -418,7 +428,7 @@
     return isNaN(val) || val <= 0 ? 0.22 : val;
   }
 
-  // 自動解析網址並轉為點擊按鈕
+  // 支援解析多個網址並轉為多個按鈕
   function renderLinkButtons(text) {
     if (!text) return '';
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -426,17 +436,18 @@
     let match;
     let lastIdx = 0;
 
-    // 找出文字中的網址，轉成按鈕，其餘保留文字
     while ((match = urlRegex.exec(text)) !== null) {
       if (match.index > lastIdx) {
         html += text.substring(lastIdx, match.index);
       }
       const url = match[0];
-      let btnText = '🔗 點擊開啟連結';
+      let btnText = '🔗 連結';
       if (url.includes('maps.app.goo.gl') || url.includes('google.com/maps')) {
-        btnText = '🗺️ 開啟 Google 地圖';
+        btnText = '🗺️ 地圖';
       } else if (url.includes('agoda') || url.includes('booking')) {
-        btnText = '🏨 開啟訂房連結';
+        btnText = '🏨 訂房';
+      } else if (url.includes('klook') || url.includes('kkday')) {
+        btnText = '🎫 票券';
       }
       html += `<a href="${url}" target="_blank" rel="noopener noreferrer" class="link-badge">${btnText}</a>`;
       lastIdx = urlRegex.lastIndex;
@@ -521,7 +532,7 @@
               </td>
               <td data-label="備註/超連結">
                 <div class="note-container">
-                  <input type="text" class="cell-input row-note" value="${rawNote}" placeholder="輸入文字或貼上網址" oninput="updateNotePreview(this)">
+                  <input type="text" class="cell-input row-note" value="${rawNote}" placeholder="可貼上多個網址" oninput="updateNotePreview(this)">
                   <div class="note-preview-area">${linkHtml}</div>
                 </div>
               </td>
@@ -539,7 +550,7 @@
             </div>
             <table>
               <thead>
-                <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ➔ 台幣)</th><th>備註 / 說明 (支援網址與地圖)</th><th style="width: 40px;"></th></tr>
+                <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ➔ 台幣)</th><th>備註 / 說明 (支援多個網址)</th><th style="width: 40px;"></th></tr>
               </thead>
               <tbody>${itemsHtml}</tbody>
             </table>
@@ -564,7 +575,7 @@
     updateGrandTotal();
   }
 
-  // 即時更新備註下方的超連結按鈕
+  // 即時更新多個連結按鈕
   function updateNotePreview(input) {
     const container = input.closest('.note-container');
     const previewArea = container.querySelector('.note-preview-area');
@@ -617,7 +628,7 @@
       </td>
       <td data-label="備註/超連結">
         <div class="note-container">
-          <input type="text" class="cell-input row-note" value="" placeholder="輸入文字或貼上網址" oninput="updateNotePreview(this)">
+          <input type="text" class="cell-input row-note" value="" placeholder="可貼上多個網址" oninput="updateNotePreview(this)">
           <div class="note-preview-area"></div>
         </div>
       </td>
@@ -645,7 +656,7 @@
       </div>
       <table>
         <thead>
-          <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ➔ 台幣)</th><th>備註 / 說明 (支援網址與地圖)</th><th style="width: 40px;"></th></tr>
+          <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ➔ 台幣)</th><th>備註 / 說明 (支援多個網址)</th><th style="width: 40px;"></th></tr>
         </thead>
         <tbody>
           <tr>
@@ -660,7 +671,7 @@
             </td>
             <td data-label="備註/超連結">
               <div class="note-container">
-                <input type="text" class="cell-input row-note" value="" placeholder="輸入文字或貼上網址" oninput="updateNotePreview(this)">
+                <input type="text" class="cell-input row-note" value="" placeholder="可貼上多個網址" oninput="updateNotePreview(this)">
                 <div class="note-preview-area"></div>
               </div>
             </td>
