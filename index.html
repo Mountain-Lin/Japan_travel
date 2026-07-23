@@ -102,6 +102,56 @@
       flex-wrap: wrap;
     }
 
+    /* 航班資訊面板樣式 */
+    .flight-panel {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 15px 20px;
+      margin-bottom: 25px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .flight-panel-title {
+      font-size: 1.05rem;
+      font-weight: bold;
+      color: #9c4d63;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 2px solid #ffdbe3;
+      padding-bottom: 8px;
+    }
+
+    .flight-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .flight-card {
+      background: #faf5f6;
+      border: 1px solid #f0d5dc;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .flight-card-header {
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: #b07d89;
+    }
+
+    .flight-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 6px;
+    }
+
     input, button, select, textarea {
       background: #faf5f6;
       color: var(--text-color);
@@ -198,6 +248,10 @@
       background: var(--danger-color);
       transform: scale(1.1);
     }
+
+    /* 表格欄位寬度配置：縮短類別，拉長細項 */
+    th.col-type, td.col-type { width: 110px; min-width: 110px; }
+    th.col-detail, td.col-detail { width: auto; }
 
     /* PART 區塊樣式 */
     .part-section {
@@ -321,9 +375,10 @@
       appearance: none;
       background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c7d82' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
       background-repeat: no-repeat;
-      background-position: right 8px center;
-      background-size: 14px;
-      padding-right: 28px;
+      background-position: right 6px center;
+      background-size: 12px;
+      padding-right: 22px;
+      font-size: 0.85rem;
     }
 
     /* 備註與超連結包裝區塊 */
@@ -448,6 +503,7 @@
     @media (max-width: 768px) {
       .top-panel { flex-direction: column; align-items: stretch; padding: 12px 15px; }
       .control-group { justify-content: space-between; }
+      .flight-grid { grid-template-columns: 1fr; }
       
       .part-header {
         flex-direction: column;
@@ -486,7 +542,7 @@
         min-width: 80px;
         flex-shrink: 0;
       }
-      .cell-input { width: calc(100% - 90px); }
+      .col-type, .col-detail, .cell-input { width: 100% !important; min-width: 100% !important; }
       .cost-box { width: calc(100% - 90px); justify-content: flex-end; }
       .note-container { width: calc(100% - 90px); }
     }
@@ -502,7 +558,6 @@
       <div class="budget-summary">
         🌸 總預算估算：<span id="grand-total-twd">NT$ 0</span>
       </div>
-      <!-- 動態分類統計列 -->
       <div id="category-breakdown" class="category-breakdown"></div>
     </div>
     <div class="control-group">
@@ -513,6 +568,31 @@
       </div>
       <button class="btn-success" onclick="saveDataToFirebase()">☁️ 同步雲端</button>
       <button class="btn-danger" onclick="resetData()">重置</button>
+    </div>
+  </div>
+
+  <!-- 航班與出國資訊面板 -->
+  <div class="flight-panel">
+    <div class="flight-panel-title">✈️ 航班與出國資訊</div>
+    <div class="flight-grid">
+      <!-- 去程航班 -->
+      <div class="flight-card">
+        <div class="flight-card-header">🛫 去程航班 (Departure)</div>
+        <div class="flight-inputs">
+          <div class="clearable-input-wrapper"><input type="text" id="flight-out-date" placeholder="日期 (例: 12/01)" /></div>
+          <div class="clearable-input-wrapper"><input type="text" id="flight-out-time" placeholder="時間 (例: 08:30)" /></div>
+          <div class="clearable-input-wrapper"><input type="text" id="flight-out-no" placeholder="班機 (例: JX820)" /></div>
+        </div>
+      </div>
+      <!-- 回程航班 -->
+      <div class="flight-card">
+        <div class="flight-card-header">🛬 回程航班 (Return)</div>
+        <div class="flight-inputs">
+          <div class="clearable-input-wrapper"><input type="text" id="flight-in-date" placeholder="日期 (例: 12/05)" /></div>
+          <div class="clearable-input-wrapper"><input type="text" id="flight-in-time" placeholder="時間 (例: 15:45)" /></div>
+          <div class="clearable-input-wrapper"><input type="text" id="flight-in-no" placeholder="班機 (例: JX821)" /></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -529,6 +609,10 @@
 <script>
   let tripData = {
     rate: 0.22,
+    flight: {
+      outDate: "12/01", outTime: "08:30", outNo: "JX820",
+      inDate: "12/05", inTime: "15:45", inNo: "JX821"
+    },
     parts: {
       part1: {
         title: "PART 1：北海道極光與玩雪篇",
@@ -552,7 +636,6 @@
     return isNaN(val) || val <= 0 ? 0.22 : val;
   }
 
-  // 封裝帶清除按鈕的輸入框 HTML 產生器
   function wrapClearable(type, className, value, placeholder = '', rows = 1) {
     if (type === 'textarea') {
       return `
@@ -571,10 +654,9 @@
     }
   }
 
-  // 類別專用：產生下拉選單 (支援快選與手動輸入保留)
+  // 類別專用：產生下拉選單 (精簡寬度設計)
   function renderCategorySelect(selectedValue) {
-    let optionsHtml = `<option value="" disabled ${!selectedValue ? 'selected' : ''}>請選擇或輸入類別</option>`;
-    
+    let optionsHtml = `<option value="" disabled ${!selectedValue ? 'selected' : ''}>類別</option>`;
     let isCustom = selectedValue && !categories.includes(selectedValue);
 
     categories.forEach(cat => {
@@ -583,36 +665,34 @@
     });
 
     if (isCustom) {
-      optionsHtml += `<option value="${selectedValue}" selected>${selectedValue} (自訂)</option>`;
+      optionsHtml += `<option value="${selectedValue}" selected>${selectedValue} (自)</option>`;
     }
 
     return `
-      <div style="display: flex; gap: 4px; align-items: center; width: 100%;">
-        <select class="cell-input row-type" onchange="updateGrandTotal()" style="flex: 1;">
+      <div style="display: flex; gap: 3px; align-items: center; width: 100%;">
+        <select class="cell-input row-type" onchange="updateGrandTotal()" style="flex: 1; padding-right: 18px;">
           ${optionsHtml}
         </select>
-        <button type="button" class="btn-primary" onclick="switchToCustomCategory(this)" title="手動輸入類別" style="padding: 6px 10px; font-size: 0.8rem; border-radius: 6px; white-space: nowrap;">✏️</button>
+        <button type="button" class="btn-primary" onclick="switchToCustomCategory(this)" title="手動輸入" style="padding: 6px 6px; font-size: 0.75rem; border-radius: 6px; white-space: nowrap;">✏️</button>
       </div>
     `;
   }
 
-  // 切換成手動輸入框模式
   function switchToCustomCategory(btn) {
     const td = btn.closest('td');
     const currentVal = td.querySelector('select, input')?.value || '';
     td.innerHTML = `
-      <div style="display: flex; gap: 4px; align-items: center; width: 100%;">
+      <div style="display: flex; gap: 3px; align-items: center; width: 100%;">
         <div class="clearable-input-wrapper" style="flex: 1;">
-          <input type="text" class="cell-input row-type" value="${currentVal}" placeholder="輸入自訂類別" oninput="updateGrandTotal()">
+          <input type="text" class="cell-input row-type" value="${currentVal}" placeholder="自訂類別" oninput="updateGrandTotal()">
           <button class="clear-btn" onclick="clearInput(this)">×</button>
         </div>
-        <button type="button" class="btn-danger" onclick="switchToSelectCategory(this)" title="切換回快選選單" style="padding: 4px 8px; font-size: 0.8rem; border-radius: 6px; white-space: nowrap;">📋</button>
+        <button type="button" class="btn-danger" onclick="switchToSelectCategory(this)" title="切換回選單" style="padding: 4px 6px; font-size: 0.75rem; border-radius: 6px; white-space: nowrap;">📋</button>
       </div>
     `;
     updateGrandTotal();
   }
 
-  // 切換回下拉選單模式
   function switchToSelectCategory(btn) {
     const td = btn.closest('td');
     const input = td.querySelector('input');
@@ -621,7 +701,6 @@
     updateGrandTotal();
   }
 
-  // 清除輸入框內容
   function clearInput(btn) {
     const wrapper = btn.closest('.clearable-input-wrapper');
     const input = wrapper.querySelector('input, textarea');
@@ -631,13 +710,11 @@
     }
   }
 
-  // 智慧解析：只有偵測到超連結時才生成按鈕
   function renderLinkButtons(text) {
     if (!text) return '';
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     let html = '';
     let match;
-    let lastIdx = 0;
 
     if (!urlRegex.test(text)) {
       return ''; 
@@ -655,15 +732,21 @@
         btnText = '🎫 票券';
       }
       html += `<a href="${url}" target="_blank" rel="noopener noreferrer" class="link-badge">${btnText}</a>`;
-      lastIdx = urlRegex.lastIndex;
     }
     return html;
   }
 
-  // 從畫面的 DOM 收集資料轉成結構化 JSON
   function collectDataFromDOM() {
     const newData = {
       rate: document.getElementById('global-rate').value,
+      flight: {
+        outDate: document.getElementById('flight-out-date').value,
+        outTime: document.getElementById('flight-out-time').value,
+        outNo: document.getElementById('flight-out-no').value,
+        inDate: document.getElementById('flight-in-date').value,
+        inTime: document.getElementById('flight-in-time').value,
+        inNo: document.getElementById('flight-in-no').value
+      },
       parts: {}
     };
 
@@ -695,11 +778,19 @@
     return newData;
   }
 
-  // 渲染畫面
   function renderUI(data) {
     if (data.rate) {
       document.getElementById('global-rate').value = data.rate;
     }
+    if (data.flight) {
+      document.getElementById('flight-out-date').value = data.flight.outDate || '';
+      document.getElementById('flight-out-time').value = data.flight.outTime || '';
+      document.getElementById('flight-out-no').value = data.flight.outNo || '';
+      document.getElementById('flight-in-date').value = data.flight.inDate || '';
+      document.getElementById('flight-in-time').value = data.flight.inTime || '';
+      document.getElementById('flight-in-no').value = data.flight.inNo || '';
+    }
+
     const container = document.getElementById('itinerary-container');
     container.innerHTML = '';
 
@@ -725,8 +816,8 @@
 
           itemsHtml += `
             <tr>
-              <td data-label="類別">${renderCategorySelect(item.type || '交通')}</td>
-              <td data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', item.detail || '', '細項')}</td>
+              <td class="col-type" data-label="類別">${renderCategorySelect(item.type || '交通')}</td>
+              <td class="col-detail" data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', item.detail || '', '細項 / 規劃')}</td>
               <td data-label="預估花費">
                 <div class="cost-box">
                   <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="${item.jpy || 0}" oninput="jpyInputChanged(this)"></div>
@@ -736,7 +827,7 @@
               </td>
               <td data-label="備註/超連結">
                 <div class="note-container">
-                  ${wrapClearable('textarea', 'cell-input row-note', rawNote, '輸入說明或貼上網址', 2)}
+                  ${wrapClearable('textarea', 'cell-input row-note', rawNote, '說明或貼上網址', 2)}
                   <div class="note-preview-area">${linkHtml}</div>
                 </div>
               </td>
@@ -754,7 +845,7 @@
             </div>
             <table>
               <thead>
-                <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ⇄ 台幣)</th><th>備註 / 說明 (含自動網址)</th><th style="width: 60px;"></th></tr>
+                <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th>預估花費 (日幣 ⇄ 台幣)</th><th>備註 / 說明 (含自動網址)</th><th style="width: 60px;"></th></tr>
               </thead>
               <tbody>${itemsHtml}</tbody>
             </table>
@@ -813,7 +904,6 @@
     updateGrandTotal();
   }
 
-  // 核心更新：同時計算總預算與各分類的動態加總
   function updateGrandTotal() {
     let grandTotal = 0;
     const categoryTotals = {};
@@ -824,7 +914,6 @@
       if (!cat) cat = '未分類';
 
       const twdVal = parseFloat(row.querySelector('.twd-val').value) || 0;
-      
       grandTotal += twdVal;
 
       if (!categoryTotals[cat]) {
@@ -833,14 +922,11 @@
       categoryTotals[cat] += twdVal;
     });
 
-    // 顯示總預算
     document.getElementById('grand-total-twd').innerText = 'NT$ ' + Math.round(grandTotal).toLocaleString('zh-TW');
 
-    // 動態產生分類統計小標籤 (金額為 0 或沒有的類別自動不顯示)
     const breakdownContainer = document.getElementById('category-breakdown');
     let breakdownHtml = '';
 
-    // 依照預設分類順序排序，自訂分類接在後面
     const sortedCats = Object.keys(categoryTotals).sort((a, b) => {
       const idxA = categories.indexOf(a);
       const idxB = categories.indexOf(b);
@@ -873,8 +959,8 @@
     const tbody = btn.closest('.day-card').querySelector('tbody');
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td data-label="類別">${renderCategorySelect('交通')}</td>
-      <td data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', '新項目', '細項')}</td>
+      <td class="col-type" data-label="類別">${renderCategorySelect('交通')}</td>
+      <td class="col-detail" data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', '新項目', '細項 / 規劃')}</td>
       <td data-label="預估花費">
         <div class="cost-box">
           <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="0" oninput="jpyInputChanged(this)"></div>
@@ -884,7 +970,7 @@
       </td>
       <td data-label="備註/超連結">
         <div class="note-container">
-          ${wrapClearable('textarea', 'cell-input row-note', '', '輸入說明或貼上網址', 2)}
+          ${wrapClearable('textarea', 'cell-input row-note', '', '說明或貼上網址', 2)}
           <div class="note-preview-area"></div>
         </div>
       </td>
@@ -912,12 +998,12 @@
       </div>
       <table>
         <thead>
-          <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ⇄ 台幣)</th><th>備註 / 說明 (含自動網址)</th><th style="width: 60px;"></th></tr>
+          <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th>預估花費 (日幣 ⇄ 台幣)</th><th>備註 / 說明 (含自動網址)</th><th style="width: 60px;"></th></tr>
         </thead>
         <tbody>
           <tr>
-            <td data-label="類別">${renderCategorySelect('交通')}</td>
-            <td data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', '新項目', '細項')}</td>
+            <td class="col-type" data-label="類別">${renderCategorySelect('交通')}</td>
+            <td class="col-detail" data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', '新項目', '細項 / 規劃')}</td>
             <td data-label="預估花費">
               <div class="cost-box">
                 <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="0" oninput="jpyInputChanged(this)"></div>
@@ -927,7 +1013,7 @@
             </td>
             <td data-label="備註/超連結">
               <div class="note-container">
-                ${wrapClearable('textarea', 'cell-input row-note', '', '輸入說明或貼上網址', 2)}
+                ${wrapClearable('textarea', 'cell-input row-note', '', '說明或貼上網址', 2)}
                 <div class="note-preview-area"></div>
               </div>
             </td>
@@ -990,7 +1076,7 @@
     const currentStructuredData = collectDataFromDOM();
     try {
       await set(ref(db, "japan_travel"), currentStructuredData);
-      alert("✅ 結構化資料已成功同步至雲端！");
+      alert("✅ 航班與行程結構化資料已成功同步至雲端！");
     } catch (err) {
       console.error(err);
       alert("❌ 同步失敗：" + err.message);
