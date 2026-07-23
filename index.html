@@ -90,30 +90,6 @@
     .btn-success { background: var(--accent-green); border-color: var(--accent-green); }
     .btn-success:hover { background: #059669; }
 
-    /* Part 區塊樣式 */
-    .part-section {
-      background: #181818;
-      border: 2px dashed var(--border-color);
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 25px;
-    }
-
-    .part-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-      border-bottom: 2px solid var(--accent-purple);
-      padding-bottom: 8px;
-    }
-
-    .part-title {
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: var(--accent-purple);
-    }
-
     /* Day 卡片樣式 */
     .day-card {
       background: var(--card-bg);
@@ -133,9 +109,6 @@
       align-items: center;
       border-left: 5px solid var(--accent-blue);
     }
-
-    .day-header.kyoto { border-left-color: #f43f5e; }
-    .day-header.hokkaido { border-left-color: #38bdf8; }
 
     .day-tag {
       font-size: 0.85rem;
@@ -214,7 +187,7 @@
       background: #1e1e1e;
     }
 
-    .add-row-btn, .add-day-btn, .add-part-btn {
+    .add-row-btn, .add-day-btn {
       background: #2a2a2a;
       border: 1px dashed var(--border-color);
       color: var(--text-color);
@@ -224,7 +197,7 @@
       cursor: pointer;
     }
 
-    .add-row-btn:hover, .add-day-btn:hover, .add-part-btn:hover {
+    .add-row-btn:hover, .add-day-btn:hover {
       background: #333;
       border-color: var(--accent-blue);
     }
@@ -236,10 +209,6 @@
       gap: 10px;
       justify-content: center;
     }
-
-    .badge-reserve { color: #f59e0b; font-weight: bold; }
-    .badge-kitty { color: #ec4899; font-weight: bold; }
-    .badge-chiikawa { color: #38bdf8; font-weight: bold; }
 
     /* ================= 專屬手機響應式排版優化 ================= */
     @media (max-width: 768px) {
@@ -308,201 +277,41 @@
   <!-- 行程與預算內容主容器 -->
   <div id="itinerary-content">
 
-    <!-- PART 1 -->
-    <div class="part-section" data-part-id="1">
-      <div class="part-header">
-        <span class="part-title" contenteditable="true">PART 1：北海道極光與玩雪篇</span>
-        <div>
-          <button onclick="addDayToPart(this)" class="btn-primary" style="padding: 4px 8px; font-size: 0.8rem;">+ 新增此區天數</button>
-          <button onclick="removePart(this)" class="btn-danger" style="padding: 4px 8px; font-size: 0.8rem;">刪除區塊</button>
-        </div>
+    <!-- 預設第 1 天 (您可以直接修改標題或刪除) -->
+    <div class="day-card">
+      <div class="day-header">
+        <span contenteditable="true">Day 1 (點擊可修改標題)</span>
+        <span class="day-tag" contenteditable="true">Base：住宿地點</span>
+        <button class="btn-danger" style="padding: 2px 6px; font-size: 0.75rem;" onclick="this.closest('.day-card').remove(); updateGrandTotal();">刪除此日</button>
       </div>
-
-      <!-- Day 8 -->
-      <div class="day-card">
-        <div class="day-header kyoto">
-          <span contenteditable="true">Day 8 (玩雪日) 琵琶湖 Valley 玩雪 × 四條烏丸採買</span>
-          <span class="day-tag" contenteditable="true">Base：京都清水寺/祇園</span>
-        </div>
-        <table>
-          <thead>
-            <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 自動換算台幣)</th><th class="col-note">備註 / 萌物亮點</th><th class="col-action"></th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="col-type" contenteditable="true">交通</td>
-              <td class="col-detail" contenteditable="true">C11. 京都車站 → 琵琶湖 Valley</td>
-              <td class="col-cost">
-                <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="3000" oninput="autoConvertRow(this)"></div>
-                  <span style="color:var(--text-muted)">➔</span>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="660"></div>
-                </div>
-              </td>
-              <td class="col-note" contenteditable="true">電車 + 巴士往返 (2人)</td>
-              <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-            </tr>
-            <tr>
-              <td class="col-type" contenteditable="true">遊玩體驗</td>
-              <td class="col-detail" contenteditable="true">D8. 纜車來回票 & D9. 玩雪設備租借</td>
-              <td class="col-cost">
-                <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="30000" oninput="autoConvertRow(this)"></div>
-                  <span style="color:var(--text-muted)">➔</span>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="6600"></div>
-                </div>
-              </td>
-              <td class="col-note" contenteditable="true"><span class="badge-reserve">關鍵預約</span> 1100M山頂雪景堆雪人 (2人)</td>
-              <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-            </tr>
-            <tr>
-              <td class="col-type" contenteditable="true">住宿</td>
-              <td class="col-detail" contenteditable="true">B8. 京都飯店 (3rd Night)</td>
-              <td class="col-cost">
-                <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="15000" oninput="autoConvertRow(this)"></div>
-                  <span style="color:var(--text-muted)">➔</span>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="3300"></div>
-                </div>
-              </td>
-              <td class="col-note" contenteditable="true">清水寺/祇園周邊飯店 (1晚)</td>
-              <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-            </tr>
-            <tr>
-              <td class="col-type" contenteditable="true">飲食</td>
-              <td class="col-detail" contenteditable="true">E12. 四條烏丸 Sanrio/晚餐</td>
-              <td class="col-cost">
-                <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="10000" oninput="autoConvertRow(this)"></div>
-                  <span style="color:var(--text-muted)">➔</span>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="2200"></div>
-                </div>
-              </td>
-              <td class="col-note" contenteditable="true"><span class="badge-chiikawa">Kiddy Land</span> & <span class="badge-kitty">Sanrio Store</span> (2人)</td>
-              <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="add-row-container"><button class="add-row-btn" onclick="addRow(this)">+ 新增此日行程</button></div>
-      </div>
-
-      <!-- Day 9 -->
-      <div class="day-card">
-        <div class="day-header kyoto">
-          <span contenteditable="true">Day 9 (和服慢活) 錦市場美食 × 壓軸懷石料理</span>
-          <span class="day-tag" contenteditable="true">Base：京都清水寺/祇園</span>
-        </div>
-        <table>
-          <thead>
-            <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 自動換算台幣)</th><th class="col-note">備註 / 萌物亮點</th><th class="col-action"></th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="col-type" contenteditable="true">遊玩體驗</td>
-              <td class="col-detail" contenteditable="true">D10. 冬季厚和服/振袖體驗</td>
-              <td class="col-cost">
-                <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="30000" oninput="autoConvertRow(this)"></div>
-                  <span style="color:var(--text-muted)">➔</span>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="6600"></div>
-                </div>
-              </td>
-              <td class="col-note" contenteditable="true"><span class="badge-reserve">關鍵預約</span> 清水寺和服擺拍 (2人)</td>
-              <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-            </tr>
-            <tr>
-              <td class="col-type" contenteditable="true">遊玩/飲食</td>
-              <td class="col-detail" contenteditable="true">D11. 景點門票 & E13. 錦市場小吃</td>
-              <td class="col-cost">
-                <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="10000" oninput="autoConvertRow(this)"></div>
-                  <span style="color:var(--text-muted)">➔</span>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="2200"></div>
-                </div>
-              </td>
-              <td class="col-note" contenteditable="true">門票與錦市場小吃 (2人)</td>
-              <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-            </tr>
-            <tr>
-              <td class="col-type" contenteditable="true">住宿</td>
-              <td class="col-detail" contenteditable="true">B9. 京都飯店 (4th Night)</td>
-              <td class="col-cost">
-                <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="15000" oninput="autoConvertRow(this)"></div>
-                  <span style="color:var(--text-muted)">➔</span>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="3300"></div>
-                </div>
-              </td>
-              <td class="col-note" contenteditable="true">清水寺/祇園周邊飯店 (1晚)</td>
-              <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-            </tr>
-            <tr>
-              <td class="col-type" contenteditable="true">飲食</td>
-              <td class="col-detail" contenteditable="true">E14. 最後一晚懷石/精緻和食</td>
-              <td class="col-cost">
-                <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="15000" oninput="autoConvertRow(this)"></div>
-                  <span style="color:var(--text-muted)">➔</span>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="3300"></div>
-                </div>
-              </td>
-              <td class="col-note" contenteditable="true"><span class="badge-reserve">關鍵預約</span> 蜜月壓軸盛宴晚餐 (2人)</td>
-              <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="add-row-container"><button class="add-row-btn" onclick="addRow(this)">+ 新增此日行程</button></div>
-      </div>
-
-      <!-- Day 10 -->
-      <div class="day-card">
-        <div class="day-header kyoto">
-          <span contenteditable="true">Day 10 (歸途日) 伴手禮採買 ✈️ 優雅返台</span>
-          <span class="day-tag" contenteditable="true">Base：溫暖的家</span>
-        </div>
-        <table>
-          <thead>
-            <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 自動換算台幣)</th><th class="col-note">備註 / 萌物亮點</th><th class="col-action"></th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="col-type" contenteditable="true">採買</td>
-              <td class="col-detail" contenteditable="true">E15. 京都車站最後伴手禮/點心</td>
-              <td class="col-cost">
-                <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="20000" oninput="autoConvertRow(this)"></div>
-                  <span style="color:var(--text-muted)">➔</span>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="4400"></div>
-                </div>
-              </td>
-              <td class="col-note" contenteditable="true">抹茶、八橋與限定禮盒 (2人)</td>
-              <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-            </tr>
-            <tr>
-              <td class="col-type" contenteditable="true">交通</td>
-              <td class="col-detail" contenteditable="true">C12. 京都車站 → KIX (Haruka) & 地鐵</td>
-              <td class="col-cost">
-                <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="6400" oninput="autoConvertRow(this)"></div>
-                  <span style="color:var(--text-muted)">➔</span>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="1408"></div>
-                </div>
-              </td>
-              <td class="col-note" contenteditable="true"><span class="badge-kitty">Hello Kitty Haruka</span> (2人)</td>
-              <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="add-row-container"><button class="add-row-btn" onclick="addRow(this)">+ 新增此日行程</button></div>
-      </div>
-
+      <table>
+        <thead>
+          <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 自動換算台幣)</th><th class="col-note">備註 / 說明</th><th class="col-action"></th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-type" contenteditable="true">交通/門票</td>
+            <td class="col-detail" contenteditable="true">範例：機場鐵路車票</td>
+            <td class="col-cost">
+              <div class="cost-box">
+                <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="1000" oninput="autoConvertRow(this)"></div>
+                <span style="color:var(--text-muted)">➔</span>
+                <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="220"></div>
+              </div>
+            </td>
+            <td class="col-note" contenteditable="true">範例備註</td>
+            <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="add-row-container"><button class="add-row-btn" onclick="addRow(this)">+ 新增此日行程</button></div>
     </div>
 
   </div> <!-- 結束 itinerary-content -->
 
   <!-- 全域新增按鈕 -->
   <div class="global-actions">
-    <button class="btn-primary add-part-btn" onclick="addPartSection()">➕ 新增全新大區塊 (例如 PART 3)</button>
+    <button class="btn-primary add-day-btn" onclick="addDayCard()">➕ 新增一天行程</button>
   </div>
 
 </div>
@@ -589,8 +398,8 @@
     updateGrandTotal();
   }
 
-  function addDayToPart(btn) {
-    const partSection = btn.closest('.part-section');
+  function addDayCard() {
+    const container = document.getElementById('itinerary-content');
     const newDayCard = document.createElement('div');
     newDayCard.className = 'day-card';
     newDayCard.innerHTML = `
@@ -601,7 +410,7 @@
       </div>
       <table>
         <thead>
-          <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 自動換算台幣)</th><th class="col-note">備註 / 萌物亮點</th><th class="col-action"></th></tr>
+          <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 自動換算台幣)</th><th class="col-note">備註 / 說明</th><th class="col-action"></th></tr>
         </thead>
         <tbody>
           <tr>
@@ -621,31 +430,7 @@
       </table>
       <div class="add-row-container"><button class="add-row-btn" onclick="addRow(this)">+ 新增此日行程</button></div>
     `;
-    partSection.appendChild(newDayCard);
-  }
-
-  function addPartSection() {
-    const container = document.getElementById('itinerary-content');
-    const newPart = document.createElement('div');
-    newPart.className = 'part-section';
-    newPart.innerHTML = `
-      <div class="part-header">
-        <span class="part-title" contenteditable="true">PART X：新篇章標題</span>
-        <div>
-          <button onclick="addDayToPart(this)" class="btn-primary" style="padding: 4px 8px; font-size: 0.8rem;">+ 新增此區天數</button>
-          <button onclick="removePart(this)" class="btn-danger" style="padding: 4px 8px; font-size: 0.8rem;">刪除區塊</button>
-        </div>
-      </div>
-      <div style="text-align: center; color: var(--text-muted); padding: 10px;">點擊上方「+ 新增此區天數」開始加入行程</div>
-    `;
-    container.appendChild(newPart);
-  }
-
-  function removePart(btn) {
-    if (confirm('確定要刪除整個 PART 區塊及其包含的所有天數嗎？')) {
-      btn.closest('.part-section').remove();
-      updateGrandTotal();
-    }
+    container.appendChild(newDayCard);
   }
 
   function resetData() {
@@ -679,7 +464,6 @@
   const db = getDatabase(app);
 
   window.saveData = async function() {
-    // 確保當前輸入框的值有寫入 HTML 屬性中，方便同步
     document.querySelectorAll('#itinerary-content input').forEach(input => {
       if(input.classList.contains('jpy-val') || input.id === 'global-rate') {
         input.setAttribute('value', input.value);
@@ -714,7 +498,7 @@
         const container = document.getElementById("itinerary-content");
         if (container.innerHTML !== html) {
           container.innerHTML = html;
-          convertAllByRate(); // 同步下來後依最新匯率重算
+          convertAllByRate();
           console.log("⚡ 雲端行程與匯率已同步更新");
         }
       }
