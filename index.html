@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>日本行程與預算管理 (結構化版)</title>
+  <title>日本行程與預算管理 (地圖超連結版)</title>
   <style>
     /* ================= 櫻花粉白系質感與風格設定 ================= */
     :root {
@@ -228,6 +228,29 @@
       border-color: var(--accent-pink);
     }
 
+    /* 備註欄位專用樣式（支援超連結預覽與編輯切換） */
+    .note-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .note-preview {
+      font-size: 0.85rem;
+      color: #6b5b62;
+      word-break: break-all;
+    }
+
+    .note-preview a {
+      color: #e65c7b;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+
+    .note-preview a:hover {
+      color: #ff5270;
+    }
+
     /* 費用輸入群組 */
     .cost-box {
       display: flex;
@@ -324,6 +347,7 @@
       td:nth-child(3)::before { content: "費用："; }
       td:nth-child(4)::before { content: "備註："; }
       .cost-box { width: 100%; justify-content: flex-end; }
+      .note-container { width: 100%; }
     }
   </style>
 </head>
@@ -355,7 +379,6 @@
 </div>
 
 <script>
-  // 預設結構化資料 (若資料庫無資料時使用)
   let tripData = {
     rate: 0.22,
     parts: {
@@ -366,7 +389,7 @@
             title: "Day 1 抵達與市區漫步",
             base: "札幌車站周邊",
             items: {
-              item1: { type: "交通", detail: "機場快線車票", jpy: 1150, note: "兩人同行" }
+              item1: { type: "交通", detail: "機場快線車票", jpy: 1150, note: "兩人同行 https://maps.app.goo.gl/example" }
             }
           }
         }
@@ -377,6 +400,23 @@
   function getRate() {
     const val = parseFloat(document.getElementById('global-rate').value);
     return isNaN(val) || val <= 0 ? 0.22 : val;
+  }
+
+  // 將文字中的網址轉為可點擊的超連結 HTML
+  function formatNoteWithLinks(text) {
+    if (!text) return '';
+    // 簡單的 URL 正規表達式檢查
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, function(url) {
+      // 顯示較友善的連結名稱或原網址
+      let displayUrl = url;
+      if (url.includes('maps.app.goo.gl') || url.includes('google.com/maps')) {
+        displayUrl = '🗺️ Google 地圖';
+      } else if (url.length > 30) {
+        displayUrl = url.substring(0, 27) + '...';
+      }
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${displayUrl}</a>`;
+    });
   }
 
   // 從畫面的 DOM 收集資料轉成結構化 JSON
@@ -412,7 +452,7 @@
     return newData;
   }
 
-  // 渲染畫面：根據資料物件用 JS 產生 HTML
+  // 渲染畫面
   function renderUI(data) {
     if (data.rate) {
       document.getElementById('global-rate').value = data.rate;
@@ -437,10 +477,13 @@
         Object.keys(items).forEach(itemKey => {
           const item = items[itemKey];
           const twd = Math.round((item.jpy || 0) * getRate());
+          const rawNote = item.note || '';
+          const formattedNoteHtml = formatNoteWithLinks(rawNote);
+
           itemsHtml += `
             <tr>
-              <td><input type="text" class="cell-input row-type" value="${item.type || ''}" oninput="updateTotalOnly()"></td>
-              <td><input type="text" class="cell-input row-detail" value="${item.detail || ''}" oninput="updateTotalOnly()"></td>
+              <td><input type="text" class="cell-input row-type" value="${item.type || ''}"></td>
+              <td><input type="text" class="cell-input row-detail" value="${item.detail || ''}"></td>
               <td>
                 <div class="cost-box">
                   <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="${item.jpy || 0}" oninput="rowInputChanged(this)"></div>
@@ -448,7 +491,12 @@
                   <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="${twd}"></div>
                 </div>
               </td>
-              <td><input type="text" class="cell-input row-note" value="${item.note || ''}" oninput="updateTotalOnly()"></td>
+              <td>
+                <div class="note-container">
+                  <input type="text" class="cell-input row-note" value="${rawNote}" placeholder="可輸入文字或貼上網址/地圖連結" oninput="updateNotePreview(this)">
+                  <div class="note-preview">${formattedNoteHtml}</div>
+                </div>
+              </td>
               <td style="text-align: center;"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
             </tr>
           `;
@@ -457,13 +505,13 @@
         daysHtml += `
           <div class="day-card" data-key="${dayKey}">
             <div class="day-header">
-              <input type="text" class="day-input" value="${day.title || ''}" oninput="updateTotalOnly()">
-              <input type="text" class="base-input" value="${day.base || ''}" placeholder="Base：住宿地點" oninput="updateTotalOnly()">
+              <input type="text" class="day-input" value="${day.title || ''}">
+              <input type="text" class="base-input" value="${day.base || ''}" placeholder="Base：住宿地點">
               <button class="btn-danger" style="padding: 3px 8px; font-size: 0.75rem; border-radius: 6px;" onclick="deleteDay(this)">刪除此日</button>
             </div>
             <table>
               <thead>
-                <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ➔ 台幣)</th><th>備註 / 說明</th><th style="width: 40px;"></th></tr>
+                <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ➔ 台幣)</th><th>備註 / 說明 (支援網址與地圖)</th><th style="width: 40px;"></th></tr>
               </thead>
               <tbody>${itemsHtml}</tbody>
             </table>
@@ -474,7 +522,7 @@
 
       partDiv.innerHTML = `
         <div class="part-header">
-          <input type="text" class="part-title-input" value="${part.title || ''}" oninput="updateTotalOnly()">
+          <input type="text" class="part-title-input" value="${part.title || ''}">
           <div>
             <button onclick="addDay(this)" class="btn-primary" style="padding: 4px 10px; font-size: 0.8rem; border-radius: 6px;">+ 新增此區天數</button>
             <button onclick="deletePart(this)" class="btn-danger" style="padding: 4px 10px; font-size: 0.8rem; border-radius: 6px;">刪除區塊</button>
@@ -488,7 +536,13 @@
     updateGrandTotal();
   }
 
-  // 即時計算單行與總預算
+  // 即時更新備註下方的超連結預覽
+  function updateNotePreview(input) {
+    const container = input.closest('.note-container');
+    const previewDiv = container.querySelector('.note-preview');
+    previewDiv.innerHTML = formatNoteWithLinks(input.value);
+  }
+
   function rowInputChanged(input) {
     const row = input.closest('tr');
     const jpy = parseFloat(input.value) || 0;
@@ -504,10 +558,6 @@
       row.querySelector('.twd-val').value = Math.round(jpy * rate);
     });
     updateGrandTotal();
-  }
-
-  function updateTotalOnly() {
-    // 只是打字不影響金額時觸發，可選
   }
 
   function updateGrandTotal() {
@@ -529,8 +579,8 @@
     const tbody = btn.closest('.day-card').querySelector('tbody');
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><input type="text" class="cell-input row-type" value="交通" oninput="updateTotalOnly()"></td>
-      <td><input type="text" class="cell-input row-detail" value="新項目" oninput="updateTotalOnly()"></td>
+      <td><input type="text" class="cell-input row-type" value="交通"></td>
+      <td><input type="text" class="cell-input row-detail" value="新項目"></td>
       <td>
         <div class="cost-box">
           <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="0" oninput="rowInputChanged(this)"></div>
@@ -538,7 +588,12 @@
           <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="0"></div>
         </div>
       </td>
-      <td><input type="text" class="cell-input row-note" value="" oninput="updateTotalOnly()"></td>
+      <td>
+        <div class="note-container">
+          <input type="text" class="cell-input row-note" value="" placeholder="可輸入文字或貼上網址/地圖連結" oninput="updateNotePreview(this)">
+          <div class="note-preview"></div>
+        </div>
+      </td>
       <td style="text-align: center;"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
     `;
     tbody.appendChild(tr);
@@ -557,18 +612,18 @@
     dayDiv.className = 'day-card';
     dayDiv.innerHTML = `
       <div class="day-header">
-        <input type="text" class="day-input" value="Day X 新的一天" oninput="updateTotalOnly()">
-        <input type="text" class="base-input" value="Base：住宿" placeholder="Base：住宿地點" oninput="updateTotalOnly()">
+        <input type="text" class="day-input" value="Day X 新的一天">
+        <input type="text" class="base-input" value="Base：住宿" placeholder="Base：住宿地點">
         <button class="btn-danger" style="padding: 3px 8px; font-size: 0.75rem; border-radius: 6px;" onclick="deleteDay(this)">刪除此日</button>
       </div>
       <table>
         <thead>
-          <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ➔ 台幣)</th><th>備註 / 說明</th><th style="width: 40px;"></th></tr>
+          <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ➔ 台幣)</th><th>備註 / 說明 (支援網址與地圖)</th><th style="width: 40px;"></th></tr>
         </thead>
         <tbody>
           <tr>
-            <td><input type="text" class="cell-input row-type" value="交通" oninput="updateTotalOnly()"></td>
-            <td><input type="text" class="cell-input row-detail" value="新項目" oninput="updateTotalOnly()"></td>
+            <td><input type="text" class="cell-input row-type" value="交通"></td>
+            <td><input type="text" class="cell-input row-detail" value="新項目"></td>
             <td>
               <div class="cost-box">
                 <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="0" oninput="rowInputChanged(this)"></div>
@@ -576,7 +631,12 @@
                 <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="0"></div>
               </div>
             </td>
-            <td><input type="text" class="cell-input row-note" value="" oninput="updateTotalOnly()"></td>
+            <td>
+              <div class="note-container">
+                <input type="text" class="cell-input row-note" value="" placeholder="可輸入文字或貼上網址/地圖連結" oninput="updateNotePreview(this)">
+                <div class="note-preview"></div>
+              </div>
+            </td>
             <td style="text-align: center;"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
           </tr>
         </tbody>
@@ -614,7 +674,7 @@
   }
 </script>
 
-<!-- Firebase 即時同步模組 (結構化儲存) -->
+<!-- Firebase 即時同步模組 -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
   import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
@@ -635,7 +695,6 @@
   window.saveDataToFirebase = async function() {
     const currentStructuredData = collectDataFromDOM();
     try {
-      // 直接把乾淨的結構化物件存入 japan_travel 節點
       await set(ref(db, "japan_travel"), currentStructuredData);
       alert("✅ 結構化資料已成功同步至雲端！");
     } catch (err) {
@@ -651,7 +710,6 @@
     onValue(tripRef, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
-        // 如果資料庫存的是舊版 html 字串，會先略過以免報錯，讓您可以直接用新版覆蓋
         if (data && data.parts) {
           tripData = data;
           renderUI(tripData);
@@ -661,7 +719,6 @@
           }
         }
       } else {
-        // 若資料庫完全空白，初始化預設畫面
         renderUI(tripData);
       }
     });
