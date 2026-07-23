@@ -251,9 +251,40 @@
       transform: scale(1.1);
     }
 
-    /* 表格欄位寬度配置：縮短類別，拉長細項 */
+    /* 拖曳按鈕與拖曳狀態樣式 */
+    .drag-handle {
+      cursor: grab;
+      color: #b07d89;
+      background: #f0e1e5;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+      user-select: none;
+    }
+    .drag-handle:active {
+      cursor: grabbing;
+      background: var(--accent-pink);
+      color: white;
+    }
+
+    tr.dragging {
+      opacity: 0.4;
+      background: #ffe0e6 !important;
+    }
+
+    tr.drag-over {
+      border-top: 2px dashed var(--accent-pink) !important;
+    }
+
+    /* 表格欄位寬度配置：排版防護 */
     th.col-type, td.col-type { width: 110px; min-width: 110px; }
     th.col-detail, td.col-detail { width: auto; }
+    th.col-handle, td.col-handle { width: 50px; text-align: center; }
 
     /* PART 區塊樣式 */
     .part-section {
@@ -501,31 +532,20 @@
       flex-wrap: wrap;
     }
 
-    /* 響應式手機優化 (修正手機版航班超出與自訂類別按鈕切半問題) */
+    /* 響應式手機優化 */
     @media (max-width: 768px) {
       .top-panel { flex-direction: column; align-items: stretch; padding: 12px 15px; }
       .control-group { justify-content: space-between; }
       .flight-grid { grid-template-columns: 1fr; }
-      
-      /* 修正手機版航班資訊欄位堆疊，避免超出卡片 */
-      .flight-inputs {
-        grid-template-columns: 1fr;
-        gap: 8px;
-      }
+      .flight-inputs { grid-template-columns: 1fr; gap: 8px; }
       
       .part-header {
         flex-direction: column;
         align-items: stretch;
         gap: 10px;
       }
-      .part-header .clearable-input-wrapper {
-        width: 100%;
-      }
-      .part-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-      }
+      .part-header .clearable-input-wrapper { width: 100%; }
+      .part-actions { display: flex; justify-content: flex-end; gap: 8px; }
 
       table, thead, tbody, th, td, tr { display: block; width: 100%; box-sizing: border-box; }
       thead { display: none; }
@@ -550,9 +570,9 @@
         min-width: 80px;
         flex-shrink: 0;
       }
-      /* 修正手機版自訂類別與一般類別區塊寬度，確保按鈕完整顯示不被切斷 */
-      .col-type, .col-detail { width: 100% !important; min-width: 100% !important; }
+      .col-type, .col-detail, .col-handle { width: 100% !important; min-width: 100% !important; }
       td.col-type > div { width: calc(100% - 90px); justify-content: flex-end; }
+      td.col-handle { justify-content: flex-start; }
       
       .cost-box { width: calc(100% - 90px); justify-content: flex-end; }
       .note-container { width: calc(100% - 90px); }
@@ -665,7 +685,6 @@
     }
   }
 
-  // 類別專用：產生下拉選單 (精簡寬度設計)
   function renderCategorySelect(selectedValue) {
     let optionsHtml = `<option value="" disabled ${!selectedValue ? 'selected' : ''}>類別</option>`;
     let isCustom = selectedValue && !categories.includes(selectedValue);
@@ -727,9 +746,7 @@
     let html = '';
     let match;
 
-    if (!urlRegex.test(text)) {
-      return ''; 
-    }
+    if (!urlRegex.test(text)) return ''; 
     urlRegex.lastIndex = 0; 
 
     while ((match = urlRegex.exec(text)) !== null) {
@@ -826,7 +843,10 @@
           const linkHtml = renderLinkButtons(rawNote);
 
           itemsHtml += `
-            <tr>
+            <tr draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropItem(event)" ondragend="dragEnd(event)">
+              <td class="col-handle" data-label="排序">
+                <span class="drag-handle" title="按住拖曳移動項目">☰ 移動</span>
+              </td>
               <td class="col-type" data-label="類別">${renderCategorySelect(item.type || '交通')}</td>
               <td class="col-detail" data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', item.detail || '', '細項 / 規劃')}</td>
               <td data-label="預估花費">
@@ -856,7 +876,14 @@
             </div>
             <table>
               <thead>
-                <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th>預估花費 (日幣 ⇄ 台幣)</th><th>備註 / 說明 (含自動網址)</th><th style="width: 60px;"></th></tr>
+                <tr>
+                  <th class="col-handle">排序</th>
+                  <th class="col-type">類別</th>
+                  <th class="col-detail">費用細項 / 規劃</th>
+                  <th>預估花費 (日幣 ⇄ 台幣)</th>
+                  <th>備註 / 說明 (含自動網址)</th>
+                  <th style="width: 60px;"></th>
+                </tr>
               </thead>
               <tbody>${itemsHtml}</tbody>
             </table>
@@ -879,6 +906,59 @@
     });
 
     updateGrandTotal();
+  }
+
+  /* ================= 拖曳排序事件邏輯 ================= */
+  let draggedRow = null;
+
+  function dragStart(e) {
+    draggedRow = e.target.closest('tr');
+    draggedRow.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  }
+
+  function dragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const tr = e.target.closest('tr');
+    if (tr && tr !== draggedRow) {
+      tr.classList.add('drag-over');
+    }
+  }
+
+  function dragLeave(e) {
+    const tr = e.target.closest('tr');
+    if (tr) {
+      tr.classList.remove('drag-over');
+    }
+  }
+
+  function dropItem(e) {
+    e.preventDefault();
+    const targetTr = e.target.closest('tr');
+    if (targetTr) {
+      targetTr.classList.remove('drag-over');
+      if (draggedRow && targetTr !== draggedRow) {
+        const tbody = targetTr.parentNode;
+        // 判斷放上方或下方
+        const rect = targetTr.getBoundingClientRect();
+        const next = (e.clientY - rect.top) / (rect.bottom - rect.top) > 0.5;
+        if (next) {
+          tbody.insertBefore(draggedRow, targetTr.nextSibling);
+        } else {
+          tbody.insertBefore(draggedRow, targetTr);
+        }
+        updateGrandTotal();
+      }
+    }
+  }
+
+  function dragEnd(e) {
+    if (draggedRow) {
+      draggedRow.classList.remove('dragging');
+    }
+    document.querySelectorAll('tr.drag-over').forEach(tr => tr.classList.remove('drag-over'));
+    draggedRow = null;
   }
 
   function updateNotePreview(textarea) {
@@ -969,7 +1049,17 @@
   function addRow(btn) {
     const tbody = btn.closest('.day-card').querySelector('tbody');
     const tr = document.createElement('tr');
+    tr.setAttribute('draggable', 'true');
+    tr.setAttribute('ondragstart', 'dragStart(event)');
+    tr.setAttribute('ondragover', 'dragOver(event)');
+    tr.setAttribute('ondragleave', 'dragLeave(event)');
+    tr.setAttribute('ondrop', 'dropItem(event)');
+    tr.setAttribute('ondragend', 'dragEnd(event)');
+
     tr.innerHTML = `
+      <td class="col-handle" data-label="排序">
+        <span class="drag-handle" title="按住拖曳移動項目">☰ 移動</span>
+      </td>
       <td class="col-type" data-label="類別">${renderCategorySelect('交通')}</td>
       <td class="col-detail" data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', '新項目', '細項 / 規劃')}</td>
       <td data-label="預估花費">
@@ -1009,10 +1099,20 @@
       </div>
       <table>
         <thead>
-          <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th>預估花費 (日幣 ⇄ 台幣)</th><th>備註 / 說明 (含自動網址)</th><th style="width: 60px;"></th></tr>
+          <tr>
+            <th class="col-handle">排序</th>
+            <th class="col-type">類別</th>
+            <th class="col-detail">費用細項 / 規劃</th>
+            <th>預估花費 (日幣 ⇄ 台幣)</th>
+            <th>備註 / 說明 (含自動網址)</th>
+            <th style="width: 60px;"></th>
+          </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropItem(event)" ondragend="dragEnd(event)">
+            <td class="col-handle" data-label="排序">
+              <span class="drag-handle" title="按住拖曳移動項目">☰ 移動</span>
+            </td>
             <td class="col-type" data-label="類別">${renderCategorySelect('交通')}</td>
             <td class="col-detail" data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', '新項目', '細項 / 規劃')}</td>
             <td data-label="預估花費">
