@@ -209,20 +209,6 @@
     }
     .btn-success:hover { background: linear-gradient(135deg, #27ae60, #1e8449); }
 
-    /* 專門針對航班輸入框進行微調，避免被裁切 */
-.flight-inputs input {
-  font-size: 0.82rem;           /* 稍微調小字體，確保日期與時間文字塞得進去 */
-  padding: 6px 8px;             /* 縮減左右內距，騰出更多空間給圖示與文字 */
-  height: 36px;                 /* 設定固定的舒適高度 */
-  box-sizing: border-box;       /* 確保 padding 不會把框撐破 */
-}
-
-/* 確保外層包覆 div 也能撐滿對應寬度 */
-.flight-inputs .clearable-input-wrapper {
-  width: 100%;
-  min-width: 0;                 /* 防止 grid 欄位被內容撐爆 */
-}
-
     /* 內建清除按鈕包裝容器 */
     .clearable-input-wrapper {
       position: relative;
