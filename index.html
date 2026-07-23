@@ -501,11 +501,17 @@
       flex-wrap: wrap;
     }
 
-    /* 響應式手機優化 */
+    /* 響應式手機優化 (修正手機版航班超出與自訂類別按鈕切半問題) */
     @media (max-width: 768px) {
       .top-panel { flex-direction: column; align-items: stretch; padding: 12px 15px; }
       .control-group { justify-content: space-between; }
       .flight-grid { grid-template-columns: 1fr; }
+      
+      /* 修正手機版航班資訊欄位堆疊，避免超出卡片 */
+      .flight-inputs {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
       
       .part-header {
         flex-direction: column;
@@ -544,7 +550,10 @@
         min-width: 80px;
         flex-shrink: 0;
       }
-      .col-type, .col-detail, .cell-input { width: 100% !important; min-width: 100% !important; }
+      /* 修正手機版自訂類別與一般類別區塊寬度，確保按鈕完整顯示不被切斷 */
+      .col-type, .col-detail { width: 100% !important; min-width: 100% !important; }
+      td.col-type > div { width: calc(100% - 90px); justify-content: flex-end; }
+      
       .cost-box { width: calc(100% - 90px); justify-content: flex-end; }
       .note-container { width: calc(100% - 90px); }
     }
