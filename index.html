@@ -259,7 +259,6 @@
       .control-group {
         justify-content: space-between;
       }
-      /* 表格轉區塊卡片排版，徹底解決手機擠壓問題 */
       table, thead, tbody, th, td, tr {
         display: block;
       }
@@ -588,7 +587,6 @@
     updateGrandTotal();
   }
 
-  // 自由新增一個天數卡片 (Day Card) 到指定的 Part 中
   function addDayToPart(btn) {
     const partSection = btn.closest('.part-section');
     const newDayCard = document.createElement('div');
@@ -624,7 +622,6 @@
     partSection.appendChild(newDayCard);
   }
 
-  // 自由新增一個 PART 大區塊 (支援 PART 3, PART 4...)
   function addPartSection() {
     const container = document.getElementById('itinerary-content');
     const newPart = document.createElement('div');
@@ -642,7 +639,6 @@
     container.appendChild(newPart);
   }
 
-  // 刪除整個 PART 區塊
   function removePart(btn) {
     if (confirm('確定要刪除整個 PART 區塊及其包含的所有天數嗎？')) {
       btn.closest('.part-section').remove();
@@ -659,7 +655,7 @@
   window.onload = updateGrandTotal;
 </script>
 
-<!-- Firebase 即時同步模組 -->
+<!-- Firebase 即時同步模組 (已修復自動雙向監聽) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
   import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
@@ -677,6 +673,7 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
+  // 儲存資料到雲端
   window.saveData = async function() {
     document.querySelectorAll('#itinerary-content input').forEach(input => {
       input.setAttribute('value', input.value);
@@ -686,24 +683,32 @@
 
     try {
       await set(ref(db, "japan_travel/html"), html);
-      alert("✅ 已成功同步至雲端，手機與電腦將同步更新！");
+      alert("✅ 已成功同步至雲端！");
     } catch (err) {
       console.error(err);
       alert("❌ 同步失敗：" + err.message);
     }
   };
 
+  // 即時監聽 Firebase 資料庫變化（確保兩邊同步更新）
   function syncFirebase() {
     const tripRef = ref(db, "japan_travel/html");
+
     onValue(tripRef, (snapshot) => {
       if (snapshot.exists()) {
         const html = snapshot.val();
-        document.getElementById("itinerary-content").innerHTML = html;
-        updateGrandTotal();
+        // 避免重複寫入造成游標跑掉，只有當內容有差異時才更新
+        const container = document.getElementById("itinerary-content");
+        if (container.innerHTML !== html) {
+          container.innerHTML = html;
+          updateGrandTotal();
+          console.log("⚡ 雲端行程已同步更新");
+        }
       }
     });
   }
 
+  // 啟動即時監聽
   syncFirebase();
 </script>
 
