@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>日本蜜月雙人行程與預算表 (Firebase 即時同步版)</title>
+  <title>日本蜜月雙人行程與預算表 (Firebase 即時同步完整版)</title>
   <style>
     :root {
       --primary-color: #ffb7c5;
@@ -121,6 +121,7 @@
       align-items: center;
     }
 
+    .day-header.fixed { background-color: #e3f2fd; }
     .day-header.osaka { background-color: var(--osaka-color); }
     .day-header.kyoto { background-color: var(--kyoto-color); }
 
@@ -224,6 +225,61 @@
   <!-- 行程主要內容 -->
   <div id="itinerary-content">
 
+    <!-- 📌 固定支出卡片 -->
+    <div class="day-card">
+      <div class="day-header fixed">
+        <span contenteditable="true">✈️ 核心固定支出 (大項預先支付 / 已鎖定)</span>
+        <span class="day-tag" contenteditable="true">雙人總計</span>
+      </div>
+      <table>
+        <thead>
+          <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 台幣)</th><th class="col-note">備註 / 萌物亮點</th><th class="col-action"></th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-type" contenteditable="true">機票</td>
+            <td class="col-detail" contenteditable="true">A1. 國泰航空 桃園 ⇆ 關西 來回機票</td>
+            <td class="col-cost">
+              <div class="cost-box">
+                <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
+                <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
+                <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="32000" oninput="updateGrandTotal()"></div>
+              </div>
+            </td>
+            <td class="col-note" contenteditable="true"><span class="badge-reserve">核心預約</span> 雙人來回含行李</td>
+            <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
+          </tr>
+          <tr>
+            <td class="col-type" contenteditable="true">住宿</td>
+            <td class="col-detail" contenteditable="true">B1. 大阪難波/心齋橋飯店 (4晚)</td>
+            <td class="col-cost">
+              <div class="cost-box">
+                <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
+                <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
+                <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="16000" oninput="updateGrandTotal()"></div>
+              </div>
+            </td>
+            <td class="col-note" contenteditable="true"><span class="badge-reserve">核心預約</span> 均價 NT$4,000/晚</td>
+            <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
+          </tr>
+          <tr>
+            <td class="col-type" contenteditable="true">門票</td>
+            <td class="col-detail" contenteditable="true">D1. 日本環球影城 USJ 門票 + 快速通關</td>
+            <td class="col-cost">
+              <div class="cost-box">
+                <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
+                <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
+                <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="14000" oninput="updateGrandTotal()"></div>
+              </div>
+            </td>
+            <td class="col-note" contenteditable="true"><span class="badge-reserve">關鍵預約</span> 含任天堂進場 (2人)</td>
+            <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="add-row-container"><button class="add-row-btn" onclick="addRow(this)">+ 新增固定支出</button></div>
+    </div>
+
     <div class="section-title">📍 Part 1：大阪 & 有馬篇 (Day 1 - Day 5)</div>
 
     <!-- Day 1 -->
@@ -261,6 +317,132 @@
               </div>
             </td>
             <td class="col-note" contenteditable="true">跑跑人擺拍 (2人)</td>
+            <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="add-row-container"><button class="add-row-btn" onclick="addRow(this)">+ 新增此日行程</button></div>
+    </div>
+
+    <!-- Day 2 -->
+    <div class="day-card">
+      <div class="day-header osaka">
+        <span contenteditable="true">Day 2 (USJ 狂歡日) 環球影城 × 任天堂 × 瑪利歐/吉伊卡哇</span>
+        <span class="day-tag" contenteditable="true">Base：大阪難波</span>
+      </div>
+      <table>
+        <thead>
+          <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 台幣)</th><th class="col-note">備註 / 萌物亮點</th><th class="col-action"></th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-type" contenteditable="true">交通</td>
+            <td class="col-detail" contenteditable="true">C2. 難波 ⇆ 環球影城往返電車</td>
+            <td class="col-cost">
+              <div class="cost-box">
+                <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="800" oninput="autoConvertRow(this)"></div>
+                <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
+                <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="176" oninput="updateGrandTotal()"></div>
+              </div>
+            </td>
+            <td class="col-note" contenteditable="true">JR / 阪神電車 (2人)</td>
+            <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
+          </tr>
+          <tr>
+            <td class="col-type" contenteditable="true">飲食/採買</td>
+            <td class="col-detail" contenteditable="true">E2. 園區主題餐點 & D2. 周邊採買</td>
+            <td class="col-cost">
+              <div class="cost-box">
+                <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="20000" oninput="autoConvertRow(this)"></div>
+                <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
+                <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="4400" oninput="updateGrandTotal()"></div>
+              </div>
+            </td>
+            <td class="col-note" contenteditable="true"><span class="badge-reserve">關鍵預約</span> 奇諾比奧餐廳 / 無敵星 (2人)</td>
+            <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="add-row-container"><button class="add-row-btn" onclick="addRow(this)">+ 新增此日行程</button></div>
+    </div>
+
+    <!-- Day 3 -->
+    <div class="day-card">
+      <div class="day-header osaka">
+        <span contenteditable="true">Day 3 (梅田動漫萌物巡禮) Chiikawa Land × Kitty 專賣店</span>
+        <span class="day-tag" contenteditable="true">Base：大阪難波</span>
+      </div>
+      <table>
+        <thead>
+          <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 台幣)</th><th class="col-note">備註 / 萌物亮點</th><th class="col-action"></th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-type" contenteditable="true">交通</td>
+            <td class="col-detail" contenteditable="true">C3. 大阪地鐵一日券 / ICOCA</td>
+            <td class="col-cost">
+              <div class="cost-box">
+                <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="1600" oninput="autoConvertRow(this)"></div>
+                <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
+                <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="352" oninput="updateGrandTotal()"></div>
+              </div>
+            </td>
+            <td class="col-note" contenteditable="true">梅田/心齋橋市區移動 (2人)</td>
+            <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
+          </tr>
+          <tr>
+            <td class="col-type" contenteditable="true">飲食/採買</td>
+            <td class="col-detail" contenteditable="true">E3. 梅田美食 & D3. 萌物周邊採買</td>
+            <td class="col-cost">
+              <div class="cost-box">
+                <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="15000" oninput="autoConvertRow(this)"></div>
+                <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
+                <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="3300" oninput="updateGrandTotal()"></div>
+              </div>
+            </td>
+            <td class="col-note" contenteditable="true"><span class="badge-chiikawa">梅田 Chiikawa</span> & <span class="badge-kitty">Sanrio Store</span></td>
+            <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="add-row-container"><button class="add-row-btn" onclick="addRow(this)">+ 新增此日行程</button></div>
+    </div>
+
+    <!-- Day 4 -->
+    <div class="day-card">
+      <div class="day-header osaka">
+        <span contenteditable="true">Day 4 (黑門市場美食 & 心齋橋大採購)</span>
+        <span class="day-tag" contenteditable="true">Base：大阪難波</span>
+      </div>
+      <table>
+        <thead>
+          <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 台幣)</th><th class="col-note">備註 / 萌物亮點</th><th class="col-action"></th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-type" contenteditable="true">飲食</td>
+            <td class="col-detail" contenteditable="true">E4. 黑門市場海鮮小吃 & E5. 燒肉晚餐</td>
+            <td class="col-cost">
+              <div class="cost-box">
+                <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="12000" oninput="autoConvertRow(this)"></div>
+                <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
+                <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="2640" oninput="updateGrandTotal()"></div>
+              </div>
+            </td>
+            <td class="col-note" contenteditable="true">和牛、干貝、海膽 (2人)</td>
+            <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
+          </tr>
+          <tr>
+            <td class="col-type" contenteditable="true">採買</td>
+            <td class="col-detail" contenteditable="true">D4. 心齋橋藥妝 & D5. 難波動漫店</td>
+            <td class="col-cost">
+              <div class="cost-box">
+                <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="20000" oninput="autoConvertRow(this)"></div>
+                <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
+                <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="4400" oninput="updateGrandTotal()"></div>
+              </div>
+            </td>
+            <td class="col-note" contenteditable="true">藥妝免稅與動漫周邊 (2人)</td>
             <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
           </tr>
         </tbody>
@@ -784,9 +966,8 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // 儲存資料到雲端 (修正 input 屬性寫入問題)
+  // 儲存資料到雲端 (把目前 DOM 中的 input value 自動寫回 HTML attribute 屬性中，確保金額不會遺失)
   window.saveData = async function() {
-    // 儲存前先將 DOM input 目前輸入的內容寫回 HTML attribute 中，避免內文丟失
     document.querySelectorAll('#itinerary-content input').forEach(input => {
       input.setAttribute('value', input.value);
     });
