@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌸☃️日本行程與預算管理☃️🌸</title>
+  <title>日本行程與預算管理 (分類動態統計版)</title>
   <style>
     /* ================= 櫻花粉白系質感與風格設定 ================= */
     :root {
@@ -56,11 +56,43 @@
       box-shadow: 0 8px 30px rgba(255, 117, 140, 0.18);
     }
 
+    .budget-summary-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 280px;
+    }
+
     .budget-summary {
       font-size: 1.25rem;
       font-weight: bold;
       color: #e65c7b;
       letter-spacing: 0.5px;
+    }
+
+    /* 動態分類統計小標籤列 */
+    .category-breakdown {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .cat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #fff0f3;
+      color: #9c4d63;
+      border: 1px solid #ffd1d5;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .cat-badge span {
+      color: #e65c7b;
     }
 
     .control-group {
@@ -81,7 +113,7 @@
       transition: all 0.2s;
     }
 
-    input:focus, textarea:focus {
+    input:focus, textarea:focus, select:focus {
       border-color: var(--accent-pink);
       box-shadow: 0 0 8px rgba(255, 117, 140, 0.3);
     }
@@ -134,7 +166,8 @@
     }
 
     .clearable-input-wrapper input,
-    .clearable-input-wrapper textarea {
+    .clearable-input-wrapper textarea,
+    .clearable-input-wrapper select {
       width: 100%;
       padding-right: 28px;
     }
@@ -157,6 +190,7 @@
       transition: all 0.2s;
       padding: 0;
       line-height: 1;
+      z-index: 10;
     }
 
     .clear-btn:hover {
@@ -283,6 +317,15 @@
       border-color: var(--accent-pink);
     }
 
+    select.cell-input {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c7d82' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      background-size: 14px;
+      padding-right: 28px;
+    }
+
     /* 備註與超連結包裝區塊 */
     .note-container {
       display: flex;
@@ -406,7 +449,6 @@
       .top-panel { flex-direction: column; align-items: stretch; padding: 12px 15px; }
       .control-group { justify-content: space-between; }
       
-      /* 手機版讓標題與按鈕上下分層，避免標題被擠壓 */
       .part-header {
         flex-direction: column;
         align-items: stretch;
@@ -456,8 +498,12 @@
 
   <!-- 頂部控制面板 -->
   <div class="top-panel">
-    <div class="budget-summary">
-      🌸 總預算估算：<span id="grand-total-twd">NT$ 0</span>
+    <div class="budget-summary-container">
+      <div class="budget-summary">
+        🌸 總預算估算：<span id="grand-total-twd">NT$ 0</span>
+      </div>
+      <!-- 動態分類統計列 -->
+      <div id="category-breakdown" class="category-breakdown"></div>
     </div>
     <div class="control-group">
       <label style="font-size: 0.9rem; font-weight: 600;">匯率 (JPY➔TWD):</label>
@@ -499,6 +545,8 @@
     }
   };
 
+  const categories = ["固定", "交通", "住宿", "飲食", "遊玩", "購物"];
+
   function getRate() {
     const val = parseFloat(document.getElementById('global-rate').value);
     return isNaN(val) || val <= 0 ? 0.22 : val;
@@ -521,6 +569,56 @@
         </div>
       `;
     }
+  }
+
+  // 類別專用：產生下拉選單 (支援快選與手動輸入保留)
+  function renderCategorySelect(selectedValue) {
+    let optionsHtml = `<option value="" disabled ${!selectedValue ? 'selected' : ''}>請選擇或輸入類別</option>`;
+    
+    let isCustom = selectedValue && !categories.includes(selectedValue);
+
+    categories.forEach(cat => {
+      const isSelected = (cat === selectedValue) ? 'selected' : '';
+      optionsHtml += `<option value="${cat}" ${isSelected}>${cat}</option>`;
+    });
+
+    if (isCustom) {
+      optionsHtml += `<option value="${selectedValue}" selected>${selectedValue} (自訂)</option>`;
+    }
+
+    return `
+      <div style="display: flex; gap: 4px; align-items: center; width: 100%;">
+        <select class="cell-input row-type" onchange="updateGrandTotal()" style="flex: 1;">
+          ${optionsHtml}
+        </select>
+        <button type="button" class="btn-primary" onclick="switchToCustomCategory(this)" title="手動輸入類別" style="padding: 6px 10px; font-size: 0.8rem; border-radius: 6px; white-space: nowrap;">✏️</button>
+      </div>
+    `;
+  }
+
+  // 切換成手動輸入框模式
+  function switchToCustomCategory(btn) {
+    const td = btn.closest('td');
+    const currentVal = td.querySelector('select, input')?.value || '';
+    td.innerHTML = `
+      <div style="display: flex; gap: 4px; align-items: center; width: 100%;">
+        <div class="clearable-input-wrapper" style="flex: 1;">
+          <input type="text" class="cell-input row-type" value="${currentVal}" placeholder="輸入自訂類別" oninput="updateGrandTotal()">
+          <button class="clear-btn" onclick="clearInput(this)">×</button>
+        </div>
+        <button type="button" class="btn-danger" onclick="switchToSelectCategory(this)" title="切換回快選選單" style="padding: 4px 8px; font-size: 0.8rem; border-radius: 6px; white-space: nowrap;">📋</button>
+      </div>
+    `;
+    updateGrandTotal();
+  }
+
+  // 切換回下拉選單模式
+  function switchToSelectCategory(btn) {
+    const td = btn.closest('td');
+    const input = td.querySelector('input');
+    const currentVal = input ? input.value : '';
+    td.innerHTML = renderCategorySelect(currentVal);
+    updateGrandTotal();
   }
 
   // 清除輸入框內容
@@ -582,7 +680,8 @@
 
         dayEl.querySelectorAll('tbody tr').forEach((rowEl, iIdx) => {
           const itemKey = `item${iIdx + 1}`;
-          const type = rowEl.querySelector('.row-type').value;
+          const typeEl = rowEl.querySelector('.row-type');
+          const type = typeEl ? typeEl.value : '交通';
           const detail = rowEl.querySelector('.row-detail').value;
           const jpy = parseFloat(rowEl.querySelector('.jpy-val').value) || 0;
           const twd = parseFloat(rowEl.querySelector('.twd-val').value) || 0;
@@ -626,7 +725,7 @@
 
           itemsHtml += `
             <tr>
-              <td data-label="類別">${wrapClearable('text', 'cell-input row-type', item.type || '', '類別')}</td>
+              <td data-label="類別">${renderCategorySelect(item.type || '交通')}</td>
               <td data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', item.detail || '', '細項')}</td>
               <td data-label="預估花費">
                 <div class="cost-box">
@@ -714,13 +813,55 @@
     updateGrandTotal();
   }
 
+  // 核心更新：同時計算總預算與各分類的動態加總
   function updateGrandTotal() {
-    let total = 0;
-    document.querySelectorAll('.twd-val').forEach(input => {
-      const val = parseFloat(input.value);
-      if (!isNaN(val)) total += val;
+    let grandTotal = 0;
+    const categoryTotals = {};
+
+    document.querySelectorAll('tbody tr').forEach(row => {
+      const typeEl = row.querySelector('.row-type');
+      let cat = typeEl ? typeEl.value.trim() : '未分類';
+      if (!cat) cat = '未分類';
+
+      const twdVal = parseFloat(row.querySelector('.twd-val').value) || 0;
+      
+      grandTotal += twdVal;
+
+      if (!categoryTotals[cat]) {
+        categoryTotals[cat] = 0;
+      }
+      categoryTotals[cat] += twdVal;
     });
-    document.getElementById('grand-total-twd').innerText = 'NT$ ' + Math.round(total).toLocaleString('zh-TW');
+
+    // 顯示總預算
+    document.getElementById('grand-total-twd').innerText = 'NT$ ' + Math.round(grandTotal).toLocaleString('zh-TW');
+
+    // 動態產生分類統計小標籤 (金額為 0 或沒有的類別自動不顯示)
+    const breakdownContainer = document.getElementById('category-breakdown');
+    let breakdownHtml = '';
+
+    // 依照預設分類順序排序，自訂分類接在後面
+    const sortedCats = Object.keys(categoryTotals).sort((a, b) => {
+      const idxA = categories.indexOf(a);
+      const idxB = categories.indexOf(b);
+      if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+      if (idxA !== -1) return -1;
+      if (idxB !== -1) return 1;
+      return a.localeCompare(b);
+    });
+
+    sortedCats.forEach(cat => {
+      const amount = categoryTotals[cat];
+      if (amount > 0) {
+        breakdownHtml += `
+          <div class="cat-badge">
+            ${cat}: <span>NT$ ${Math.round(amount).toLocaleString('zh-TW')}</span>
+          </div>
+        `;
+      }
+    });
+
+    breakdownContainer.innerHTML = breakdownHtml;
   }
 
   function deleteRow(btn) {
@@ -732,7 +873,7 @@
     const tbody = btn.closest('.day-card').querySelector('tbody');
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td data-label="類別">${wrapClearable('text', 'cell-input row-type', '交通', '類別')}</td>
+      <td data-label="類別">${renderCategorySelect('交通')}</td>
       <td data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', '新項目', '細項')}</td>
       <td data-label="預估花費">
         <div class="cost-box">
@@ -775,7 +916,7 @@
         </thead>
         <tbody>
           <tr>
-            <td data-label="類別">${wrapClearable('text', 'cell-input row-type', '交通', '類別')}</td>
+            <td data-label="類別">${renderCategorySelect('交通')}</td>
             <td data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', '新項目', '細項')}</td>
             <td data-label="預估花費">
               <div class="cost-box">
