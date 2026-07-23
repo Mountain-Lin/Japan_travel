@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>日本行程與預算管理 (地圖超連結版)</title>
+  <title>日本行程與預算管理 (超連結優化版)</title>
   <style>
     /* ================= 櫻花粉白系質感與風格設定 ================= */
     :root {
@@ -228,27 +228,33 @@
       border-color: var(--accent-pink);
     }
 
-    /* 備註欄位專用樣式（支援超連結預覽與編輯切換） */
+    /* 備註與超連結包裝區塊 */
     .note-container {
       display: flex;
       flex-direction: column;
+      gap: 6px;
+    }
+
+    .link-badge {
+      display: inline-flex;
+      align-items: center;
       gap: 4px;
-    }
-
-    .note-preview {
-      font-size: 0.85rem;
-      color: #6b5b62;
-      word-break: break-all;
-    }
-
-    .note-preview a {
+      background: #fff0f3;
       color: #e65c7b;
-      text-decoration: underline;
+      border: 1px solid #ffd1d5;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      text-decoration: none;
       font-weight: 600;
+      width: fit-content;
+      transition: all 0.2s;
     }
 
-    .note-preview a:hover {
-      color: #ff5270;
+    .link-badge:hover {
+      background: #ffe0e6;
+      border-color: var(--accent-pink);
+      transform: translateY(-1px);
     }
 
     /* 費用輸入群組 */
@@ -327,27 +333,37 @@
       flex-wrap: wrap;
     }
 
-    /* 響應式手機優化 */
+    /* 響應式手機優化 (修復文字直排斷行問題) */
     @media (max-width: 768px) {
       .top-panel { flex-direction: column; align-items: stretch; }
       .control-group { justify-content: space-between; }
-      table, thead, tbody, th, td, tr { display: block; }
+      table, thead, tbody, th, td, tr { display: block; width: 100%; box-sizing: border-box; }
       thead { display: none; }
       tr {
-        margin-bottom: 10px;
+        margin-bottom: 12px;
         border: 1px solid var(--border-color);
-        border-radius: 8px;
+        border-radius: 10px;
         background: #ffffff;
-        padding: 8px;
+        padding: 10px;
       }
-      td { border: none; padding: 5px 0; display: flex; justify-content: space-between; align-items: center; }
-      td::before { color: var(--text-muted); font-weight: 600; }
-      td:nth-child(1)::before { content: "類別："; }
-      td:nth-child(2)::before { content: "明細："; }
-      td:nth-child(3)::before { content: "費用："; }
-      td:nth-child(4)::before { content: "備註："; }
-      .cost-box { width: 100%; justify-content: flex-end; }
-      .note-container { width: 100%; }
+      td { 
+        border: none; 
+        padding: 6px 0; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+      }
+      /* 使用正常橫向排列標籤，避免直排斷行 */
+      td::before { 
+        content: attr(data-label); 
+        color: var(--text-muted); 
+        font-weight: 600; 
+        min-width: 80px;
+        flex-shrink: 0;
+      }
+      .cell-input { width: calc(100% - 90px); }
+      .cost-box { width: calc(100% - 90px); justify-content: flex-end; }
+      .note-container { width: calc(100% - 90px); }
     }
   </style>
 </head>
@@ -389,7 +405,7 @@
             title: "Day 1 抵達與市區漫步",
             base: "札幌車站周邊",
             items: {
-              item1: { type: "交通", detail: "機場快線車票", jpy: 1150, note: "兩人同行 https://maps.app.goo.gl/example" }
+              item1: { type: "交通", detail: "機場快線車票", jpy: 1150, note: "https://maps.app.goo.gl/example" }
             }
           }
         }
@@ -402,21 +418,33 @@
     return isNaN(val) || val <= 0 ? 0.22 : val;
   }
 
-  // 將文字中的網址轉為可點擊的超連結 HTML
-  function formatNoteWithLinks(text) {
+  // 自動解析網址並轉為點擊按鈕
+  function renderLinkButtons(text) {
     if (!text) return '';
-    // 簡單的 URL 正規表達式檢查
     const urlRegex = /(https?:\/\/[^\s]+)/g;
-    return text.replace(urlRegex, function(url) {
-      // 顯示較友善的連結名稱或原網址
-      let displayUrl = url;
-      if (url.includes('maps.app.goo.gl') || url.includes('google.com/maps')) {
-        displayUrl = '🗺️ Google 地圖';
-      } else if (url.length > 30) {
-        displayUrl = url.substring(0, 27) + '...';
+    let html = '';
+    let match;
+    let lastIdx = 0;
+
+    // 找出文字中的網址，轉成按鈕，其餘保留文字
+    while ((match = urlRegex.exec(text)) !== null) {
+      if (match.index > lastIdx) {
+        html += text.substring(lastIdx, match.index);
       }
-      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${displayUrl}</a>`;
-    });
+      const url = match[0];
+      let btnText = '🔗 點擊開啟連結';
+      if (url.includes('maps.app.goo.gl') || url.includes('google.com/maps')) {
+        btnText = '🗺️ 開啟 Google 地圖';
+      } else if (url.includes('agoda') || url.includes('booking')) {
+        btnText = '🏨 開啟訂房連結';
+      }
+      html += `<a href="${url}" target="_blank" rel="noopener noreferrer" class="link-badge">${btnText}</a>`;
+      lastIdx = urlRegex.lastIndex;
+    }
+    if (lastIdx < text.length) {
+      html += text.substring(lastIdx);
+    }
+    return html;
   }
 
   // 從畫面的 DOM 收集資料轉成結構化 JSON
@@ -478,26 +506,26 @@
           const item = items[itemKey];
           const twd = Math.round((item.jpy || 0) * getRate());
           const rawNote = item.note || '';
-          const formattedNoteHtml = formatNoteWithLinks(rawNote);
+          const linkHtml = renderLinkButtons(rawNote);
 
           itemsHtml += `
             <tr>
-              <td><input type="text" class="cell-input row-type" value="${item.type || ''}"></td>
-              <td><input type="text" class="cell-input row-detail" value="${item.detail || ''}"></td>
-              <td>
+              <td data-label="類別"><input type="text" class="cell-input row-type" value="${item.type || ''}"></td>
+              <td data-label="費用細項"><input type="text" class="cell-input row-detail" value="${item.detail || ''}"></td>
+              <td data-label="預估花費">
                 <div class="cost-box">
                   <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="${item.jpy || 0}" oninput="rowInputChanged(this)"></div>
                   <span style="color:var(--text-muted)">➔</span>
                   <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="${twd}"></div>
                 </div>
               </td>
-              <td>
+              <td data-label="備註/超連結">
                 <div class="note-container">
-                  <input type="text" class="cell-input row-note" value="${rawNote}" placeholder="可輸入文字或貼上網址/地圖連結" oninput="updateNotePreview(this)">
-                  <div class="note-preview">${formattedNoteHtml}</div>
+                  <input type="text" class="cell-input row-note" value="${rawNote}" placeholder="輸入文字或貼上網址" oninput="updateNotePreview(this)">
+                  <div class="note-preview-area">${linkHtml}</div>
                 </div>
               </td>
-              <td style="text-align: center;"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
+              <td style="text-align: center;" data-label="操作"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
             </tr>
           `;
         });
@@ -536,11 +564,11 @@
     updateGrandTotal();
   }
 
-  // 即時更新備註下方的超連結預覽
+  // 即時更新備註下方的超連結按鈕
   function updateNotePreview(input) {
     const container = input.closest('.note-container');
-    const previewDiv = container.querySelector('.note-preview');
-    previewDiv.innerHTML = formatNoteWithLinks(input.value);
+    const previewArea = container.querySelector('.note-preview-area');
+    previewArea.innerHTML = renderLinkButtons(input.value);
   }
 
   function rowInputChanged(input) {
@@ -569,7 +597,6 @@
     document.getElementById('grand-total-twd').innerText = 'NT$ ' + Math.round(total).toLocaleString('zh-TW');
   }
 
-  // 增刪互動函式
   function deleteRow(btn) {
     btn.closest('tr').remove();
     updateGrandTotal();
@@ -579,22 +606,22 @@
     const tbody = btn.closest('.day-card').querySelector('tbody');
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><input type="text" class="cell-input row-type" value="交通"></td>
-      <td><input type="text" class="cell-input row-detail" value="新項目"></td>
-      <td>
+      <td data-label="類別"><input type="text" class="cell-input row-type" value="交通"></td>
+      <td data-label="費用細項"><input type="text" class="cell-input row-detail" value="新項目"></td>
+      <td data-label="預估花費">
         <div class="cost-box">
           <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="0" oninput="rowInputChanged(this)"></div>
           <span style="color:var(--text-muted)">➔</span>
           <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="0"></div>
         </div>
       </td>
-      <td>
+      <td data-label="備註/超連結">
         <div class="note-container">
-          <input type="text" class="cell-input row-note" value="" placeholder="可輸入文字或貼上網址/地圖連結" oninput="updateNotePreview(this)">
-          <div class="note-preview"></div>
+          <input type="text" class="cell-input row-note" value="" placeholder="輸入文字或貼上網址" oninput="updateNotePreview(this)">
+          <div class="note-preview-area"></div>
         </div>
       </td>
-      <td style="text-align: center;"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
+      <td style="text-align: center;" data-label="操作"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
     `;
     tbody.appendChild(tr);
     updateGrandTotal();
@@ -622,22 +649,22 @@
         </thead>
         <tbody>
           <tr>
-            <td><input type="text" class="cell-input row-type" value="交通"></td>
-            <td><input type="text" class="cell-input row-detail" value="新項目"></td>
-            <td>
+            <td data-label="類別"><input type="text" class="cell-input row-type" value="交通"></td>
+            <td data-label="費用細項"><input type="text" class="cell-input row-detail" value="新項目"></td>
+            <td data-label="預估花費">
               <div class="cost-box">
                 <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="0" oninput="rowInputChanged(this)"></div>
                 <span style="color:var(--text-muted)">➔</span>
                 <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="0"></div>
               </div>
             </td>
-            <td>
+            <td data-label="備註/超連結">
               <div class="note-container">
-                <input type="text" class="cell-input row-note" value="" placeholder="可輸入文字或貼上網址/地圖連結" oninput="updateNotePreview(this)">
-                <div class="note-preview"></div>
+                <input type="text" class="cell-input row-note" value="" placeholder="輸入文字或貼上網址" oninput="updateNotePreview(this)">
+                <div class="note-preview-area"></div>
               </div>
             </td>
-            <td style="text-align: center;"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
+            <td style="text-align: center;" data-label="操作"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
           </tr>
         </tbody>
       </table>
