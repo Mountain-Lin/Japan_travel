@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>日本行程規劃與預算管理</title>
+  <title>🌸日本行程與預算管理</title>
   <style>
     /* ================= 櫻花粉白系質感與風格設定 ================= */
     :root {
@@ -70,7 +70,7 @@
       flex-wrap: wrap;
     }
 
-    input, button, select {
+    input, button, select, textarea {
       background: #faf5f6;
       color: var(--text-color);
       border: 1px solid var(--border-color);
@@ -81,7 +81,7 @@
       transition: all 0.2s;
     }
 
-    input:focus {
+    input:focus, textarea:focus {
       border-color: var(--accent-pink);
       box-shadow: 0 0 8px rgba(255, 117, 140, 0.3);
     }
@@ -111,6 +111,9 @@
       background: #fff0f1; 
       color: var(--danger-color); 
       border: 1px solid #ffd1d5; 
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      border-radius: 6px;
     }
     .btn-danger:hover { background: var(--danger-color); color: white; }
 
@@ -121,6 +124,46 @@
       box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
     }
     .btn-success:hover { background: linear-gradient(135deg, #27ae60, #1e8449); }
+
+    /* 內建清除按鈕包裝容器 */
+    .clearable-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .clearable-input-wrapper input,
+    .clearable-input-wrapper textarea {
+      width: 100%;
+      padding-right: 28px; /* 留出空間給 x 按鈕 */
+    }
+
+    .clear-btn {
+      position: absolute;
+      right: 8px;
+      background: #e2d1d6;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: all 0.2s;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .clear-btn:hover {
+      opacity: 1;
+      background: var(--danger-color);
+      transform: scale(1.1);
+    }
 
     /* PART 區塊樣式 */
     .part-section {
@@ -139,6 +182,7 @@
       margin-bottom: 15px;
       border-bottom: 2px solid #ffdbe3;
       padding-bottom: 10px;
+      gap: 10px;
     }
 
     .part-title-input {
@@ -184,7 +228,7 @@
       color: var(--text-color);
       font-size: 1rem;
       flex: 1;
-      min-width: 200px;
+      min-width: 180px;
     }
     .day-input:focus {
       background: white;
@@ -305,13 +349,20 @@
     }
 
     .del-row-btn {
-      background: transparent;
-      border: none;
-      color: #ff85a1;
-      font-size: 1.1rem;
+      background: #fff0f1;
+      color: var(--danger-color);
+      border: 1px solid #ffd1d5;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      border-radius: 6px;
       cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
     }
-    .del-row-btn:hover { color: var(--danger-color); }
+    .del-row-btn:hover {
+      background: var(--danger-color);
+      color: white;
+    }
 
     .add-row-container {
       padding: 10px;
@@ -381,14 +432,17 @@
 
 <div class="container">
 
-  <!-- 頂部控制面板 (已設定黏性置頂) -->
+  <!-- 頂部控制面板 -->
   <div class="top-panel">
     <div class="budget-summary">
       🌸 總預算估算：<span id="grand-total-twd">NT$ 0</span>
     </div>
     <div class="control-group">
       <label style="font-size: 0.9rem; font-weight: 600;">匯率 (JPY➔TWD):</label>
-      <input type="number" id="global-rate" value="0.22" step="0.01" oninput="recalculateAll()">
+      <div class="clearable-input-wrapper" style="width: 100px;">
+        <input type="number" id="global-rate" value="0.22" step="0.01" oninput="recalculateAll()">
+        <button class="clear-btn" onclick="clearInput(this)">×</button>
+      </div>
       <button class="btn-success" onclick="saveDataToFirebase()">☁️ 同步雲端</button>
       <button class="btn-danger" onclick="resetData()">重置</button>
     </div>
@@ -415,7 +469,7 @@
             title: "Day 1 抵達與市區漫步",
             base: "札幌車站周邊",
             items: {
-              item1: { type: "交通", detail: "機場快線車票", jpy: 1150, note: "https://maps.app.goo.gl/example https://www.booking.com/example" }
+              item1: { type: "交通", detail: "機場快線車票", jpy: 1150, twd: 253, note: "https://maps.app.goo.gl/example\nhttps://www.booking.com/example" }
             }
           }
         }
@@ -428,7 +482,41 @@
     return isNaN(val) || val <= 0 ? 0.22 : val;
   }
 
-  // 支援解析多個網址並轉為多個按鈕
+  // 封裝帶清除按鈕的輸入框 HTML 產生器
+  function wrapClearable(type, className, value, placeholder = '', rows = 1) {
+    if (type === 'textarea') {
+      return `
+        <div class="clearable-input-wrapper">
+          <textarea class="${className}" placeholder="${placeholder}" rows="${rows}" oninput="updateNotePreview(this); checkClearBtn(this);">${value || ''}</textarea>
+          <button class="clear-btn" onclick="clearInput(this)">×</button>
+        </div>
+      `;
+    } else {
+      return `
+        <div class="clearable-input-wrapper">
+          <input type="${type}" class="${className}" value="${value !== undefined ? value : ''}" placeholder="${placeholder}" oninput="checkClearBtn(this);">
+          <button class="clear-btn" onclick="clearInput(this)">×</button>
+        </div>
+      `;
+    }
+  }
+
+  // 清除輸入框內容
+  function clearInput(btn) {
+    const wrapper = btn.closest('.clearable-input-wrapper');
+    const input = wrapper.querySelector('input, textarea');
+    if (input) {
+      input.value = '';
+      // 觸發對應的事件讓畫面即時更新
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }
+
+  function checkClearBtn(input) {
+    // 預留若需動態顯示隱藏清除按鈕的擴充點
+  }
+
+  // 支援解析多行與多個網址
   function renderLinkButtons(text) {
     if (!text) return '';
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -481,9 +569,10 @@
           const type = rowEl.querySelector('.row-type').value;
           const detail = rowEl.querySelector('.row-detail').value;
           const jpy = parseFloat(rowEl.querySelector('.jpy-val').value) || 0;
+          const twd = parseFloat(rowEl.querySelector('.twd-val').value) || 0;
           const note = rowEl.querySelector('.row-note').value;
 
-          newData.parts[partKey].days[dayKey].items[itemKey] = { type, detail, jpy, note };
+          newData.parts[partKey].days[dayKey].items[itemKey] = { type, detail, jpy, twd, note };
         });
       });
     });
@@ -515,28 +604,29 @@
         const items = day.items || {};
         Object.keys(items).forEach(itemKey => {
           const item = items[itemKey];
-          const twd = Math.round((item.jpy || 0) * getRate());
+          // 兼容舊資料：若無儲存 twd 則自動依 jpy 換算
+          const twd = item.twd !== undefined ? item.twd : Math.round((item.jpy || 0) * getRate());
           const rawNote = item.note || '';
           const linkHtml = renderLinkButtons(rawNote);
 
           itemsHtml += `
             <tr>
-              <td data-label="類別"><input type="text" class="cell-input row-type" value="${item.type || ''}"></td>
-              <td data-label="費用細項"><input type="text" class="cell-input row-detail" value="${item.detail || ''}"></td>
+              <td data-label="類別">${wrapClearable('text', 'cell-input row-type', item.type || '', '類別')}</td>
+              <td data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', item.detail || '', '細項')}</td>
               <td data-label="預估花費">
                 <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="${item.jpy || 0}" oninput="rowInputChanged(this)"></div>
+                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="${item.jpy || 0}" oninput="jpyInputChanged(this)"></div>
                   <span style="color:var(--text-muted)">➔</span>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="${twd}"></div>
+                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="${twd}" oninput="twdInputChanged(this)"></div>
                 </div>
               </td>
               <td data-label="備註/超連結">
                 <div class="note-container">
-                  <input type="text" class="cell-input row-note" value="${rawNote}" placeholder="可貼上多個網址" oninput="updateNotePreview(this)">
+                  ${wrapClearable('textarea', 'cell-input row-note', rawNote, '輸入說明或貼上多個網址', 2)}
                   <div class="note-preview-area">${linkHtml}</div>
                 </div>
               </td>
-              <td style="text-align: center;" data-label="操作"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
+              <td style="text-align: center;" data-label="操作"><button class="del-row-btn" onclick="deleteRow(this)">刪除</button></td>
             </tr>
           `;
         });
@@ -544,13 +634,13 @@
         daysHtml += `
           <div class="day-card" data-key="${dayKey}">
             <div class="day-header">
-              <input type="text" class="day-input" value="${day.title || ''}">
-              <input type="text" class="base-input" value="${day.base || ''}" placeholder="Base：住宿地點">
-              <button class="btn-danger" style="padding: 3px 8px; font-size: 0.75rem; border-radius: 6px;" onclick="deleteDay(this)">刪除此日</button>
+              ${wrapClearable('text', 'day-input', day.title || '', 'Day 名稱')}
+              ${wrapClearable('text', 'base-input', day.base || '', 'Base：住宿地點')}
+              <button class="btn-danger" onclick="deleteDay(this)">刪除此日</button>
             </div>
             <table>
               <thead>
-                <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ➔ 台幣)</th><th>備註 / 說明 (支援多個網址)</th><th style="width: 40px;"></th></tr>
+                <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ⇄ 台幣)</th><th>備註 / 說明 (支援多網址)</th><th style="width: 60px;"></th></tr>
               </thead>
               <tbody>${itemsHtml}</tbody>
             </table>
@@ -561,10 +651,10 @@
 
       partDiv.innerHTML = `
         <div class="part-header">
-          <input type="text" class="part-title-input" value="${part.title || ''}">
-          <div>
-            <button onclick="addDay(this)" class="btn-primary" style="padding: 4px 10px; font-size: 0.8rem; border-radius: 6px;">+ 新增此區天數</button>
-            <button onclick="deletePart(this)" class="btn-danger" style="padding: 4px 10px; font-size: 0.8rem; border-radius: 6px;">刪除區塊</button>
+          ${wrapClearable('text', 'part-title-input', part.title || '', '分區標題')}
+          <div style="display: flex; gap: 8px; flex-shrink: 0;">
+            <button onclick="addDay(this)" class="btn-primary" style="padding: 4px 10px; font-size: 0.8rem; border-radius: 6px;">+ 新增天數</button>
+            <button onclick="deletePart(this)" class="btn-danger">刪除區塊</button>
           </div>
         </div>
         <div class="days-container">${daysHtml}</div>
@@ -575,18 +665,31 @@
     updateGrandTotal();
   }
 
-  // 即時更新多個連結按鈕
-  function updateNotePreview(input) {
-    const container = input.closest('.note-container');
+  // 即時更新備註多連結預覽
+  function updateNotePreview(textarea) {
+    const container = textarea.closest('.note-container');
     const previewArea = container.querySelector('.note-preview-area');
-    previewArea.innerHTML = renderLinkButtons(input.value);
+    previewArea.innerHTML = renderLinkButtons(textarea.value);
   }
 
-  function rowInputChanged(input) {
+  // 日幣輸入連動換算台幣
+  function jpyInputChanged(input) {
     const row = input.closest('tr');
     const jpy = parseFloat(input.value) || 0;
-    const twd = Math.round(jpy * getRate());
-    row.querySelector('.twd-val').value = twd;
+    const twdInput = row.querySelector('.twd-val');
+    twdInput.value = Math.round(jpy * getRate());
+    updateGrandTotal();
+  }
+
+  // 台幣輸入直接填寫（或反算日幣）
+  function twdInputChanged(input) {
+    const row = input.closest('tr');
+    const twd = parseFloat(input.value) || 0;
+    const jpyInput = row.querySelector('.jpy-val');
+    const rate = getRate();
+    if (rate > 0) {
+      jpyInput.value = Math.round(twd / rate);
+    }
     updateGrandTotal();
   }
 
@@ -617,22 +720,22 @@
     const tbody = btn.closest('.day-card').querySelector('tbody');
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td data-label="類別"><input type="text" class="cell-input row-type" value="交通"></td>
-      <td data-label="費用細項"><input type="text" class="cell-input row-detail" value="新項目"></td>
+      <td data-label="類別">${wrapClearable('text', 'cell-input row-type', '交通', '類別')}</td>
+      <td data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', '新項目', '細項')}</td>
       <td data-label="預估花費">
         <div class="cost-box">
-          <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="0" oninput="rowInputChanged(this)"></div>
+          <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="0" oninput="jpyInputChanged(this)"></div>
           <span style="color:var(--text-muted)">➔</span>
-          <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="0"></div>
+          <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="0" oninput="twdInputChanged(this)"></div>
         </div>
       </td>
       <td data-label="備註/超連結">
         <div class="note-container">
-          <input type="text" class="cell-input row-note" value="" placeholder="可貼上多個網址" oninput="updateNotePreview(this)">
+          ${wrapClearable('textarea', 'cell-input row-note', '', '輸入說明或貼上多個網址', 2)}
           <div class="note-preview-area"></div>
         </div>
       </td>
-      <td style="text-align: center;" data-label="操作"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
+      <td style="text-align: center;" data-label="操作"><button class="del-row-btn" onclick="deleteRow(this)">刪除</button></td>
     `;
     tbody.appendChild(tr);
     updateGrandTotal();
@@ -650,32 +753,32 @@
     dayDiv.className = 'day-card';
     dayDiv.innerHTML = `
       <div class="day-header">
-        <input type="text" class="day-input" value="Day X 新的一天">
-        <input type="text" class="base-input" value="Base：住宿" placeholder="Base：住宿地點">
-        <button class="btn-danger" style="padding: 3px 8px; font-size: 0.75rem; border-radius: 6px;" onclick="deleteDay(this)">刪除此日</button>
+        ${wrapClearable('text', 'day-input', 'Day X 新的一天', 'Day 名稱')}
+        ${wrapClearable('text', 'base-input', '住宿地點', 'Base：住宿地點')}
+        <button class="btn-danger" onclick="deleteDay(this)">刪除此日</button>
       </div>
       <table>
         <thead>
-          <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ➔ 台幣)</th><th>備註 / 說明 (支援多個網址)</th><th style="width: 40px;"></th></tr>
+          <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ⇄ 台幣)</th><th>備註 / 說明 (支援多網址)</th><th style="width: 60px;"></th></tr>
         </thead>
         <tbody>
           <tr>
-            <td data-label="類別"><input type="text" class="cell-input row-type" value="交通"></td>
-            <td data-label="費用細項"><input type="text" class="cell-input row-detail" value="新項目"></td>
+            <td data-label="類別">${wrapClearable('text', 'cell-input row-type', '交通', '類別')}</td>
+            <td data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', '新項目', '細項')}</td>
             <td data-label="預估花費">
               <div class="cost-box">
-                <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="0" oninput="rowInputChanged(this)"></div>
+                <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="0" oninput="jpyInputChanged(this)"></div>
                 <span style="color:var(--text-muted)">➔</span>
-                <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="0"></div>
+                <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="0" oninput="twdInputChanged(this)"></div>
               </div>
             </td>
             <td data-label="備註/超連結">
               <div class="note-container">
-                <input type="text" class="cell-input row-note" value="" placeholder="可貼上多個網址" oninput="updateNotePreview(this)">
+                ${wrapClearable('textarea', 'cell-input row-note', '', '輸入說明或貼上多個網址', 2)}
                 <div class="note-preview-area"></div>
               </div>
             </td>
-            <td style="text-align: center;" data-label="操作"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
+            <td style="text-align: center;" data-label="操作"><button class="del-row-btn" onclick="deleteRow(this)">刪除</button></td>
           </tr>
         </tbody>
       </table>
@@ -692,7 +795,7 @@
     tripData.parts[newPKey] = {
       title: `PART ${pKeys.length + 1}：新篇章`,
       days: {
-        day1: { title: "Day 1", base: "住宿地點", items: { item1: { type: "交通", detail: "項目", jpy: 0, note: "" } } }
+        day1: { title: "Day 1", base: "住宿地點", items: { item1: { type: "交通", detail: "項目", jpy: 0, twd: 0, note: "" } } }
       }
     };
     renderUI(tripData);
