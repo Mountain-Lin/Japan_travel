@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌸日本行程與預算管理</title>
+  <title>🌸☃️日本行程與預算管理☃️🌸 </title>
   <style>
     /* ================= 櫻花粉白系質感與風格設定 ================= */
     :root {
@@ -136,7 +136,7 @@
     .clearable-input-wrapper input,
     .clearable-input-wrapper textarea {
       width: 100%;
-      padding-right: 28px; /* 留出空間給 x 按鈕 */
+      padding-right: 28px;
     }
 
     .clear-btn {
@@ -181,7 +181,7 @@
       align-items: center;
       margin-bottom: 15px;
       border-bottom: 2px solid #ffdbe3;
-      padding-bottom: 10px;
+      padding-bottom: 12px;
       gap: 10px;
     }
 
@@ -196,6 +196,12 @@
     .part-title-input:focus {
       background: #faf5f6;
       border-color: var(--accent-pink);
+    }
+
+    .part-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
     }
 
     /* Day 卡片樣式 */
@@ -399,6 +405,22 @@
     @media (max-width: 768px) {
       .top-panel { flex-direction: column; align-items: stretch; padding: 12px 15px; }
       .control-group { justify-content: space-between; }
+      
+      /* 手機版讓標題與按鈕上下分層，避免標題被擠壓 */
+      .part-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+      .part-header .clearable-input-wrapper {
+        width: 100%;
+      }
+      .part-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
       table, thead, tbody, th, td, tr { display: block; width: 100%; box-sizing: border-box; }
       thead { display: none; }
       tr {
@@ -487,14 +509,14 @@
     if (type === 'textarea') {
       return `
         <div class="clearable-input-wrapper">
-          <textarea class="${className}" placeholder="${placeholder}" rows="${rows}" oninput="updateNotePreview(this); checkClearBtn(this);">${value || ''}</textarea>
+          <textarea class="${className}" placeholder="${placeholder}" rows="${rows}" oninput="updateNotePreview(this);">${value || ''}</textarea>
           <button class="clear-btn" onclick="clearInput(this)">×</button>
         </div>
       `;
     } else {
       return `
         <div class="clearable-input-wrapper">
-          <input type="${type}" class="${className}" value="${value !== undefined ? value : ''}" placeholder="${placeholder}" oninput="checkClearBtn(this);">
+          <input type="${type}" class="${className}" value="${value !== undefined ? value : ''}" placeholder="${placeholder}">
           <button class="clear-btn" onclick="clearInput(this)">×</button>
         </div>
       `;
@@ -507,16 +529,11 @@
     const input = wrapper.querySelector('input, textarea');
     if (input) {
       input.value = '';
-      // 觸發對應的事件讓畫面即時更新
       input.dispatchEvent(new Event('input', { bubbles: true }));
     }
   }
 
-  function checkClearBtn(input) {
-    // 預留若需動態顯示隱藏清除按鈕的擴充點
-  }
-
-  // 支援解析多行與多個網址
+  // 智慧解析：只有偵測到超連結時才生成按鈕
   function renderLinkButtons(text) {
     if (!text) return '';
     const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -524,10 +541,12 @@
     let match;
     let lastIdx = 0;
 
+    if (!urlRegex.test(text)) {
+      return ''; 
+    }
+    urlRegex.lastIndex = 0; 
+
     while ((match = urlRegex.exec(text)) !== null) {
-      if (match.index > lastIdx) {
-        html += text.substring(lastIdx, match.index);
-      }
       const url = match[0];
       let btnText = '🔗 連結';
       if (url.includes('maps.app.goo.gl') || url.includes('google.com/maps')) {
@@ -539,9 +558,6 @@
       }
       html += `<a href="${url}" target="_blank" rel="noopener noreferrer" class="link-badge">${btnText}</a>`;
       lastIdx = urlRegex.lastIndex;
-    }
-    if (lastIdx < text.length) {
-      html += text.substring(lastIdx);
     }
     return html;
   }
@@ -604,7 +620,6 @@
         const items = day.items || {};
         Object.keys(items).forEach(itemKey => {
           const item = items[itemKey];
-          // 兼容舊資料：若無儲存 twd 則自動依 jpy 換算
           const twd = item.twd !== undefined ? item.twd : Math.round((item.jpy || 0) * getRate());
           const rawNote = item.note || '';
           const linkHtml = renderLinkButtons(rawNote);
@@ -622,7 +637,7 @@
               </td>
               <td data-label="備註/超連結">
                 <div class="note-container">
-                  ${wrapClearable('textarea', 'cell-input row-note', rawNote, '輸入說明或貼上多個網址', 2)}
+                  ${wrapClearable('textarea', 'cell-input row-note', rawNote, '輸入說明或貼上網址', 2)}
                   <div class="note-preview-area">${linkHtml}</div>
                 </div>
               </td>
@@ -640,7 +655,7 @@
             </div>
             <table>
               <thead>
-                <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ⇄ 台幣)</th><th>備註 / 說明 (支援多網址)</th><th style="width: 60px;"></th></tr>
+                <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ⇄ 台幣)</th><th>備註 / 說明 (含自動網址)</th><th style="width: 60px;"></th></tr>
               </thead>
               <tbody>${itemsHtml}</tbody>
             </table>
@@ -652,8 +667,8 @@
       partDiv.innerHTML = `
         <div class="part-header">
           ${wrapClearable('text', 'part-title-input', part.title || '', '分區標題')}
-          <div style="display: flex; gap: 8px; flex-shrink: 0;">
-            <button onclick="addDay(this)" class="btn-primary" style="padding: 4px 10px; font-size: 0.8rem; border-radius: 6px;">+ 新增天數</button>
+          <div class="part-actions">
+            <button onclick="addDay(this)" class="btn-primary" style="padding: 6px 12px; font-size: 0.85rem; border-radius: 6px;">+ 新增天數</button>
             <button onclick="deletePart(this)" class="btn-danger">刪除區塊</button>
           </div>
         </div>
@@ -665,14 +680,12 @@
     updateGrandTotal();
   }
 
-  // 即時更新備註多連結預覽
   function updateNotePreview(textarea) {
     const container = textarea.closest('.note-container');
     const previewArea = container.querySelector('.note-preview-area');
     previewArea.innerHTML = renderLinkButtons(textarea.value);
   }
 
-  // 日幣輸入連動換算台幣
   function jpyInputChanged(input) {
     const row = input.closest('tr');
     const jpy = parseFloat(input.value) || 0;
@@ -681,7 +694,6 @@
     updateGrandTotal();
   }
 
-  // 台幣輸入直接填寫（或反算日幣）
   function twdInputChanged(input) {
     const row = input.closest('tr');
     const twd = parseFloat(input.value) || 0;
@@ -731,7 +743,7 @@
       </td>
       <td data-label="備註/超連結">
         <div class="note-container">
-          ${wrapClearable('textarea', 'cell-input row-note', '', '輸入說明或貼上多個網址', 2)}
+          ${wrapClearable('textarea', 'cell-input row-note', '', '輸入說明或貼上網址', 2)}
           <div class="note-preview-area"></div>
         </div>
       </td>
@@ -759,7 +771,7 @@
       </div>
       <table>
         <thead>
-          <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ⇄ 台幣)</th><th>備註 / 說明 (支援多網址)</th><th style="width: 60px;"></th></tr>
+          <tr><th>類別</th><th>費用細項 / 規劃</th><th>預估花費 (日幣 ⇄ 台幣)</th><th>備註 / 說明 (含自動網址)</th><th style="width: 60px;"></th></tr>
         </thead>
         <tbody>
           <tr>
@@ -774,7 +786,7 @@
             </td>
             <td data-label="備註/超連結">
               <div class="note-container">
-                ${wrapClearable('textarea', 'cell-input row-note', '', '輸入說明或貼上多個網址', 2)}
+                ${wrapClearable('textarea', 'cell-input row-note', '', '輸入說明或貼上網址', 2)}
                 <div class="note-preview-area"></div>
               </div>
             </td>
