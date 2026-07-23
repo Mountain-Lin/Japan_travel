@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>日本極光/玩雪與萌物之旅 - 行程與預算管理</title>
+  <title>日本行程與預算管理</title>
   <style>
     /* ================= 基礎黑底與風格設定 ================= */
     :root {
@@ -195,12 +195,9 @@
       color: var(--text-color);
     }
 
-    .convert-row-btn {
-      padding: 4px 8px;
-      background: #333;
-      border: none;
-      color: var(--text-color);
-      border-radius: 4px;
+    .twd-val {
+      color: var(--accent-green);
+      font-weight: bold;
     }
 
     .del-row-btn {
@@ -302,8 +299,7 @@
     </div>
     <div class="control-group">
       <label>匯率 (JPY➔TWD):</label>
-      <input type="number" id="global-rate" value="0.22" step="0.01" style="width: 70px;">
-      <button class="btn-primary" onclick="convertAllByRate()">一鍵換算</button>
+      <input type="number" id="global-rate" value="0.22" step="0.01" oninput="convertAllByRate()" style="width: 70px;">
       <button class="btn-success" onclick="saveData()">☁️ 同步雲端</button>
       <button class="btn-danger" onclick="resetData()">重置</button>
     </div>
@@ -330,7 +326,7 @@
         </div>
         <table>
           <thead>
-            <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 台幣)</th><th class="col-note">備註 / 萌物亮點</th><th class="col-action"></th></tr>
+            <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 自動換算台幣)</th><th class="col-note">備註 / 萌物亮點</th><th class="col-action"></th></tr>
           </thead>
           <tbody>
             <tr>
@@ -339,8 +335,8 @@
               <td class="col-cost">
                 <div class="cost-box">
                   <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="3000" oninput="autoConvertRow(this)"></div>
-                  <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="660" oninput="updateGrandTotal()"></div>
+                  <span style="color:var(--text-muted)">➔</span>
+                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="660"></div>
                 </div>
               </td>
               <td class="col-note" contenteditable="true">電車 + 巴士往返 (2人)</td>
@@ -352,8 +348,8 @@
               <td class="col-cost">
                 <div class="cost-box">
                   <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="30000" oninput="autoConvertRow(this)"></div>
-                  <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="6600" oninput="updateGrandTotal()"></div>
+                  <span style="color:var(--text-muted)">➔</span>
+                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="6600"></div>
                 </div>
               </td>
               <td class="col-note" contenteditable="true"><span class="badge-reserve">關鍵預約</span> 1100M山頂雪景堆雪人 (2人)</td>
@@ -364,9 +360,9 @@
               <td class="col-detail" contenteditable="true">B8. 京都飯店 (3rd Night)</td>
               <td class="col-cost">
                 <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
-                  <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="3500" oninput="updateGrandTotal()"></div>
+                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="15000" oninput="autoConvertRow(this)"></div>
+                  <span style="color:var(--text-muted)">➔</span>
+                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="3300"></div>
                 </div>
               </td>
               <td class="col-note" contenteditable="true">清水寺/祇園周邊飯店 (1晚)</td>
@@ -377,9 +373,9 @@
               <td class="col-detail" contenteditable="true">E12. 四條烏丸 Sanrio/晚餐</td>
               <td class="col-cost">
                 <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
-                  <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="2000" oninput="updateGrandTotal()"></div>
+                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="10000" oninput="autoConvertRow(this)"></div>
+                  <span style="color:var(--text-muted)">➔</span>
+                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="2200"></div>
                 </div>
               </td>
               <td class="col-note" contenteditable="true"><span class="badge-chiikawa">Kiddy Land</span> & <span class="badge-kitty">Sanrio Store</span> (2人)</td>
@@ -398,7 +394,7 @@
         </div>
         <table>
           <thead>
-            <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 台幣)</th><th class="col-note">備註 / 萌物亮點</th><th class="col-action"></th></tr>
+            <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 自動換算台幣)</th><th class="col-note">備註 / 萌物亮點</th><th class="col-action"></th></tr>
           </thead>
           <tbody>
             <tr>
@@ -407,8 +403,8 @@
               <td class="col-cost">
                 <div class="cost-box">
                   <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="30000" oninput="autoConvertRow(this)"></div>
-                  <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="6600" oninput="updateGrandTotal()"></div>
+                  <span style="color:var(--text-muted)">➔</span>
+                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="6600"></div>
                 </div>
               </td>
               <td class="col-note" contenteditable="true"><span class="badge-reserve">關鍵預約</span> 清水寺和服擺拍 (2人)</td>
@@ -419,12 +415,12 @@
               <td class="col-detail" contenteditable="true">D11. 景點門票 & E13. 錦市場小吃</td>
               <td class="col-cost">
                 <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="2200" oninput="autoConvertRow(this)"></div>
-                  <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="2484" oninput="updateGrandTotal()"></div>
+                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="10000" oninput="autoConvertRow(this)"></div>
+                  <span style="color:var(--text-muted)">➔</span>
+                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="2200"></div>
                 </div>
               </td>
-              <td class="col-note" contenteditable="true">門票JPY2200 + 小吃NT$2000 (2人)</td>
+              <td class="col-note" contenteditable="true">門票與錦市場小吃 (2人)</td>
               <td class="col-action"><button class="del-row-btn" onclick="deleteRow(this)">✕</button></td>
             </tr>
             <tr>
@@ -432,9 +428,9 @@
               <td class="col-detail" contenteditable="true">B9. 京都飯店 (4th Night)</td>
               <td class="col-cost">
                 <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
-                  <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="3500" oninput="updateGrandTotal()"></div>
+                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="15000" oninput="autoConvertRow(this)"></div>
+                  <span style="color:var(--text-muted)">➔</span>
+                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="3300"></div>
                 </div>
               </td>
               <td class="col-note" contenteditable="true">清水寺/祇園周邊飯店 (1晚)</td>
@@ -445,9 +441,9 @@
               <td class="col-detail" contenteditable="true">E14. 最後一晚懷石/精緻和食</td>
               <td class="col-cost">
                 <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
-                  <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="3000" oninput="updateGrandTotal()"></div>
+                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="15000" oninput="autoConvertRow(this)"></div>
+                  <span style="color:var(--text-muted)">➔</span>
+                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="3300"></div>
                 </div>
               </td>
               <td class="col-note" contenteditable="true"><span class="badge-reserve">關鍵預約</span> 蜜月壓軸盛宴晚餐 (2人)</td>
@@ -466,7 +462,7 @@
         </div>
         <table>
           <thead>
-            <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 台幣)</th><th class="col-note">備註 / 萌物亮點</th><th class="col-action"></th></tr>
+            <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 自動換算台幣)</th><th class="col-note">備註 / 萌物亮點</th><th class="col-action"></th></tr>
           </thead>
           <tbody>
             <tr>
@@ -475,8 +471,8 @@
               <td class="col-cost">
                 <div class="cost-box">
                   <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="20000" oninput="autoConvertRow(this)"></div>
-                  <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="4400" oninput="updateGrandTotal()"></div>
+                  <span style="color:var(--text-muted)">➔</span>
+                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="4400"></div>
                 </div>
               </td>
               <td class="col-note" contenteditable="true">抹茶、八橋與限定禮盒 (2人)</td>
@@ -488,8 +484,8 @@
               <td class="col-cost">
                 <div class="cost-box">
                   <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="6400" oninput="autoConvertRow(this)"></div>
-                  <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="1408" oninput="updateGrandTotal()"></div>
+                  <span style="color:var(--text-muted)">➔</span>
+                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="1408"></div>
                 </div>
               </td>
               <td class="col-note" contenteditable="true"><span class="badge-kitty">Hello Kitty Haruka</span> (2人)</td>
@@ -518,30 +514,36 @@
     return isNaN(rateVal) || rateVal <= 0 ? 0.22 : rateVal;
   }
 
-  function autoConvertRow(btnOrInput) {
-    const costBox = btnOrInput.closest('.cost-box');
+  // 單行日幣變動時即時換算對應台幣
+  function autoConvertRow(inputElement) {
+    const costBox = inputElement.closest('.cost-box');
     if (!costBox) return;
     const jpyInput = costBox.querySelector('.jpy-val');
     const twdInput = costBox.querySelector('.twd-val');
 
-    if (jpyInput && twdInput && jpyInput.value !== '') {
+    if (jpyInput && twdInput) {
       const jpy = parseFloat(jpyInput.value);
       if (!isNaN(jpy)) {
         twdInput.value = Math.round(jpy * getRate());
+      } else {
+        twdInput.value = 0;
       }
     }
     updateGrandTotal();
   }
 
+  // 匯率變動時，全面即時重新計算所有行的台幣金額與總預算
   function convertAllByRate() {
     const rate = getRate();
     document.querySelectorAll('.cost-box').forEach(box => {
       const jpyInput = box.querySelector('.jpy-val');
       const twdInput = box.querySelector('.twd-val');
-      if (jpyInput && twdInput && jpyInput.value !== '') {
+      if (jpyInput && twdInput) {
         const jpy = parseFloat(jpyInput.value);
         if (!isNaN(jpy)) {
           twdInput.value = Math.round(jpy * rate);
+        } else {
+          twdInput.value = 0;
         }
       }
     });
@@ -575,9 +577,9 @@
       <td class="col-detail" contenteditable="true">請輸入行程規劃...</td>
       <td class="col-cost">
         <div class="cost-box">
-          <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" placeholder="日幣" oninput="autoConvertRow(this)"></div>
-          <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-          <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="0" oninput="updateGrandTotal()"></div>
+          <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="0" oninput="autoConvertRow(this)"></div>
+          <span style="color:var(--text-muted)">➔</span>
+          <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="0"></div>
         </div>
       </td>
       <td class="col-note" contenteditable="true">備註說明</td>
@@ -599,7 +601,7 @@
       </div>
       <table>
         <thead>
-          <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 台幣)</th><th class="col-note">備註 / 萌物亮點</th><th class="col-action"></th></tr>
+          <tr><th class="col-type">類別</th><th class="col-detail">費用細項 / 規劃</th><th class="col-cost">預估花費 (日幣 ➔ 自動換算台幣)</th><th class="col-note">備註 / 萌物亮點</th><th class="col-action"></th></tr>
         </thead>
         <tbody>
           <tr>
@@ -608,8 +610,8 @@
             <td class="col-cost">
               <div class="cost-box">
                 <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="0" oninput="autoConvertRow(this)"></div>
-                <button class="convert-row-btn" onclick="autoConvertRow(this)">➔</button>
-                <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="0" oninput="updateGrandTotal()"></div>
+                <span style="color:var(--text-muted)">➔</span>
+                <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" readonly value="0"></div>
               </div>
             </td>
             <td class="col-note" contenteditable="true">備註說明</td>
@@ -652,10 +654,13 @@
     }
   }
 
-  window.onload = updateGrandTotal;
+  // 初始化計算一次
+  window.onload = function() {
+    convertAllByRate();
+  };
 </script>
 
-<!-- Firebase 即時同步模組 (已修復自動雙向監聽) -->
+<!-- Firebase 即時同步模組 -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
   import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
@@ -673,16 +678,19 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // 儲存資料到雲端
   window.saveData = async function() {
+    // 確保當前輸入框的值有寫入 HTML 屬性中，方便同步
     document.querySelectorAll('#itinerary-content input').forEach(input => {
-      input.setAttribute('value', input.value);
+      if(input.classList.contains('jpy-val') || input.id === 'global-rate') {
+        input.setAttribute('value', input.value);
+      }
     });
 
     const html = document.getElementById("itinerary-content").innerHTML;
+    const rate = document.getElementById("global-rate").value;
 
     try {
-      await set(ref(db, "japan_travel/html"), html);
+      await set(ref(db, "japan_travel"), { html: html, rate: rate });
       alert("✅ 已成功同步至雲端！");
     } catch (err) {
       console.error(err);
@@ -690,25 +698,29 @@
     }
   };
 
-  // 即時監聽 Firebase 資料庫變化（確保兩邊同步更新）
   function syncFirebase() {
-    const tripRef = ref(db, "japan_travel/html");
+    const tripRef = ref(db, "japan_travel");
 
     onValue(tripRef, (snapshot) => {
       if (snapshot.exists()) {
-        const html = snapshot.val();
-        // 避免重複寫入造成游標跑掉，只有當內容有差異時才更新
+        const data = snapshot.val();
+        const html = data.html;
+        const rate = data.rate;
+
+        if (rate && document.getElementById("global-rate").value !== rate) {
+          document.getElementById("global-rate").value = rate;
+        }
+
         const container = document.getElementById("itinerary-content");
         if (container.innerHTML !== html) {
           container.innerHTML = html;
-          updateGrandTotal();
-          console.log("⚡ 雲端行程已同步更新");
+          convertAllByRate(); // 同步下來後依最新匯率重算
+          console.log("⚡ 雲端行程與匯率已同步更新");
         }
       }
     });
   }
 
-  // 啟動即時監聽
   syncFirebase();
 </script>
 
