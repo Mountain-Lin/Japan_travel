@@ -251,20 +251,21 @@
       transform: scale(1.1);
     }
 
-    /* 拖曳按鈕與拖曳狀態樣式 */
+    /* 緊湊的三線拖曳按鈕樣式 */
     .drag-handle {
       cursor: grab;
       color: #b07d89;
       background: #f0e1e5;
       border: none;
-      border-radius: 6px;
-      padding: 6px 10px;
-      font-size: 0.9rem;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 1rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       transition: background 0.2s;
       user-select: none;
+      letter-spacing: -2px;
     }
     .drag-handle:active {
       cursor: grabbing;
@@ -281,10 +282,10 @@
       border-top: 2px dashed var(--accent-pink) !important;
     }
 
-    /* 表格欄位寬度配置：排版防護 */
+    /* 表格欄位寬度配置：縮減排序欄位寬度 */
     th.col-type, td.col-type { width: 110px; min-width: 110px; }
     th.col-detail, td.col-detail { width: auto; }
-    th.col-handle, td.col-handle { width: 50px; text-align: center; }
+    th.col-handle, td.col-handle { width: 36px; text-align: center; padding-left: 4px; padding-right: 4px; }
 
     /* PART 區塊樣式 */
     .part-section {
@@ -845,7 +846,7 @@
           itemsHtml += `
             <tr draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropItem(event)" ondragend="dragEnd(event)">
               <td class="col-handle" data-label="排序">
-                <span class="drag-handle" title="按住拖曳移動項目">☰</span>
+                <span class="drag-handle" title="按住拖曳調整順序">☰</span>
               </td>
               <td class="col-type" data-label="類別">${renderCategorySelect(item.type || '交通')}</td>
               <td class="col-detail" data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', item.detail || '', '細項 / 規劃')}</td>
@@ -877,7 +878,7 @@
             <table>
               <thead>
                 <tr>
-                  <th class="col-handle">排序</th>
+                  <th class="col-handle"></th>
                   <th class="col-type">類別</th>
                   <th class="col-detail">費用細項 / 規劃</th>
                   <th>預估花費 (日幣 ⇄ 台幣)</th>
@@ -940,7 +941,6 @@
       targetTr.classList.remove('drag-over');
       if (draggedRow && targetTr !== draggedRow) {
         const tbody = targetTr.parentNode;
-        // 判斷放上方或下方
         const rect = targetTr.getBoundingClientRect();
         const next = (e.clientY - rect.top) / (rect.bottom - rect.top) > 0.5;
         if (next) {
@@ -1058,7 +1058,7 @@
 
     tr.innerHTML = `
       <td class="col-handle" data-label="排序">
-        <span class="drag-handle" title="按住拖曳移動項目">☰</span>
+        <span class="drag-handle" title="按住拖曳調整順序">☰</span>
       </td>
       <td class="col-type" data-label="類別">${renderCategorySelect('交通')}</td>
       <td class="col-detail" data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', '新項目', '細項 / 規劃')}</td>
@@ -1100,7 +1100,7 @@
       <table>
         <thead>
           <tr>
-            <th class="col-handle">排序</th>
+            <th class="col-handle"></th>
             <th class="col-type">類別</th>
             <th class="col-detail">費用細項 / 規劃</th>
             <th>預估花費 (日幣 ⇄ 台幣)</th>
@@ -1111,7 +1111,7 @@
         <tbody>
           <tr draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropItem(event)" ondragend="dragEnd(event)">
             <td class="col-handle" data-label="排序">
-              <span class="drag-handle" title="按住拖曳移動項目">☰</span>
+              <span class="drag-handle" title="按住拖曳調整順序">☰</span>
             </td>
             <td class="col-type" data-label="類別">${renderCategorySelect('交通')}</td>
             <td class="col-detail" data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', '新項目', '細項 / 規劃')}</td>
