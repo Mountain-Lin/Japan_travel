@@ -1366,34 +1366,43 @@ async function loadFirebase(){
 
   const snapshot = await get(ref(db,"japan_travel"));
 
-if(snapshot.exists()){
+  if(snapshot.exists()){
 
-  console.log("Firebase 行程資料:");
-  console.log(snapshot.val());
+    console.log("Firebase 行程資料:");
+    console.log(snapshot.val());
+
+    const data = snapshot.val();
+
+    let html = "";
+
+    Object.keys(data).forEach(day => {
+
+      html += `
+        <div>
+          <h3>${day}</h3>
+          <p>日期：${data[day].date}</p>
+          <p>地點：${data[day].place}</p>
+          <p>備註：${data[day].memo}</p>
+        </div>
+      `;
+
+    });
 
 
-  const data = snapshot.val();
+    document.getElementById("firebaseTest").innerHTML = html;
 
-  let html = "";
+  }else{
 
-  Object.keys(data).forEach(day => {
+    document.getElementById("firebaseTest").innerHTML =
+    "Firebase 已連線，但沒有資料";
 
-    html += `
-      <div>
-        <h3>${day}</h3>
-        <p>日期：${data[day].date}</p>
-        <p>地點：${data[day].place}</p>
-        <p>備註：${data[day].memo}</p>
-      </div>
-    `;
-
-  });
-
-
-  document.getElementById("firebaseTest").innerHTML = html;
+  }
 
 }
-}
+
+
+// ⭐ 加這行
+loadFirebase();
 
 </script>
 
