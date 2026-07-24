@@ -28,56 +28,83 @@
       color: var(--text-color);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       margin: 0;
-      padding: 15px;
-      line-height: 1.6;
+      padding: 10px;
+      line-height: 1.5;
     }
 
     .container {
       max-width: 1000px;
       margin: 0 auto;
-      padding: 10px;
+      padding: 5px;
     }
 
-    /* 頂部控制面板 (固定置頂) */
+    /* 頂部控制面板 (固定置頂) - 手機版高度精簡 */
     .top-panel {
       position: sticky;
-      top: 10px;
+      top: 5px;
       z-index: 1000;
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.96);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 15px 20px;
-      margin-bottom: 25px;
+      border-radius: 14px;
+      padding: 10px 15px;
+      margin-bottom: 15px;
       display: flex;
       flex-wrap: wrap;
-      gap: 15px;
+      gap: 10px;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 8px 30px rgba(255, 117, 140, 0.18);
+      box-shadow: 0 4px 20px rgba(255, 117, 140, 0.15);
     }
 
     .budget-summary-container {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
       flex: 1;
-      min-width: 280px;
+      min-width: 200px;
+    }
+
+    .budget-summary-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
     }
 
     .budget-summary {
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       font-weight: bold;
       color: #e65c7b;
       letter-spacing: 0.5px;
     }
 
-    /* 動態分類統計小標籤列 */
+    .toggle-details-btn {
+      background: #fff0f3;
+      color: #e65c7b;
+      border: 1px solid #ffd1d5;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .toggle-details-btn:hover {
+      background: #ffe0e6;
+    }
+
+    /* 動態分類統計小標籤列 (預設隱藏，點擊才展開) */
     .category-breakdown {
-      display: flex;
+      display: none;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 5px;
+      margin-top: 4px;
+      padding-top: 6px;
+      border-top: 1px dashed #f0d5dc;
+    }
+    .category-breakdown.show {
+      display: flex;
     }
 
     .cat-badge {
@@ -87,9 +114,9 @@
       background: #fff0f3;
       color: #9c4d63;
       border: 1px solid #ffd1d5;
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-size: 0.8rem;
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-size: 0.75rem;
       font-weight: 600;
     }
 
@@ -99,7 +126,7 @@
 
     .control-group {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       align-items: center;
       flex-wrap: wrap;
     }
@@ -108,70 +135,71 @@
     .flight-panel {
       background: #ffffff;
       border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 15px 20px;
-      margin-bottom: 25px;
+      border-radius: 14px;
+      padding: 12px 15px;
+      margin-bottom: 15px;
       box-shadow: var(--card-shadow);
     }
 
     .flight-panel-title {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: bold;
       color: #9c4d63;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: space-between;
       border-bottom: 2px solid #ffdbe3;
-      padding-bottom: 8px;
+      padding-bottom: 6px;
+      cursor: pointer;
     }
 
     .flight-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 15px;
+      gap: 10px;
     }
 
     .flight-card {
       background: #faf5f6;
       border: 1px solid #f0d5dc;
-      border-radius: 12px;
-      padding: 12px;
+      border-radius: 10px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .flight-card-header {
       font-weight: bold;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #b07d89;
     }
 
     .flight-inputs {
       display: grid;
       grid-template-columns: 1fr 1fr 1.2fr;
-      gap: 6px;
+      gap: 5px;
     }
 
     input, button, select, textarea {
       background: #faf5f6;
       color: var(--text-color);
       border: 1px solid var(--border-color);
-      padding: 8px 14px;
+      padding: 6px 10px;
       border-radius: 8px;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       outline: none;
       transition: all 0.2s;
     }
 
     input:focus, textarea:focus, select:focus {
       border-color: var(--accent-pink);
-      box-shadow: 0 0 8px rgba(255, 117, 140, 0.3);
+      box-shadow: 0 0 6px rgba(255, 117, 140, 0.3);
     }
 
     input[type="number"] {
-      width: 85px;
+      width: 75px;
     }
 
     button {
@@ -187,7 +215,7 @@
       background: linear-gradient(135deg, #ff758c, #ff7eb3); 
       color: white; 
       border: none; 
-      box-shadow: 0 4px 10px rgba(255, 117, 140, 0.3);
+      box-shadow: 0 3px 8px rgba(255, 117, 140, 0.3);
     }
     .btn-primary:hover { background: linear-gradient(135deg, #ff5270, #ff639c); }
 
@@ -195,8 +223,8 @@
       background: #fff0f1; 
       color: var(--danger-color); 
       border: 1px solid #ffd1d5; 
-      padding: 4px 10px;
-      font-size: 0.8rem;
+      padding: 3px 8px;
+      font-size: 0.75rem;
       border-radius: 6px;
     }
     .btn-danger:hover { background: var(--danger-color); color: white; }
@@ -205,7 +233,7 @@
       background: linear-gradient(135deg, #2ecc71, #27ae60); 
       color: white; 
       border: none; 
-      box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+      box-shadow: 0 3px 8px rgba(46, 204, 113, 0.3);
     }
     .btn-success:hover { background: linear-gradient(135deg, #27ae60, #1e8449); }
 
@@ -221,19 +249,19 @@
     .clearable-input-wrapper textarea,
     .clearable-input-wrapper select {
       width: 100%;
-      padding-right: 28px;
+      padding-right: 24px;
     }
 
     .clear-btn {
       position: absolute;
-      right: 8px;
+      right: 6px;
       background: #e2d1d6;
       color: #fff;
       border: none;
       border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      font-size: 11px;
+      width: 16px;
+      height: 16px;
+      font-size: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -251,49 +279,29 @@
       transform: scale(1.1);
     }
 
-    /* 緊湊的三線拖曳按鈕樣式 */
+    /* 三線拖曳按鈕樣式 */
     .drag-handle {
       cursor: grab;
       color: #b07d89;
       background: #f0e1e5;
       border: none;
       border-radius: 4px;
-      padding: 4px 8px;
-      font-size: 1rem;
+      padding: 3px 6px;
+      font-size: 0.9rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.2s;
       user-select: none;
       letter-spacing: -2px;
     }
-    .drag-handle:active {
-      cursor: grabbing;
-      background: var(--accent-pink);
-      color: white;
-    }
-
-    tr.dragging {
-      opacity: 0.4;
-      background: #ffe0e6 !important;
-    }
-
-    tr.drag-over {
-      border-top: 2px dashed var(--accent-pink) !important;
-    }
-
-    /* 表格欄位寬度配置：縮減排序欄位寬度 */
-    th.col-type, td.col-type { width: 110px; min-width: 110px; }
-    th.col-detail, td.col-detail { width: auto; }
-    th.col-handle, td.col-handle { width: 36px; text-align: center; padding-left: 4px; padding-right: 4px; }
 
     /* PART 區塊樣式 */
     .part-section {
       background: #ffffff;
       border: 2px dashed #f0d5dc;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 25px;
+      border-radius: 14px;
+      padding: 15px;
+      margin-bottom: 20px;
       box-shadow: var(--card-shadow);
     }
 
@@ -301,14 +309,14 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
       border-bottom: 2px solid #ffdbe3;
-      padding-bottom: 12px;
+      padding-bottom: 10px;
       gap: 10px;
     }
 
     .part-title-input {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: bold;
       color: #9c4d63;
       border: 1px solid transparent;
@@ -322,7 +330,7 @@
 
     .part-actions {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-shrink: 0;
     }
 
@@ -330,22 +338,22 @@
     .day-card {
       background: #faf5f6;
       border: 1px solid var(--border-color);
-      border-radius: 12px;
-      margin-bottom: 15px;
+      border-radius: 10px;
+      margin-bottom: 12px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(220, 195, 202, 0.15);
+      box-shadow: 0 2px 6px rgba(220, 195, 202, 0.1);
     }
 
     .day-header {
       background: linear-gradient(to right, #ffeef2, #faf5f6);
-      padding: 12px 15px;
+      padding: 10px 12px;
       font-weight: bold;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-left: 6px solid var(--accent-pink);
+      border-left: 5px solid var(--accent-pink);
       border-bottom: 1px solid var(--border-color);
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
@@ -354,9 +362,9 @@
       border: 1px solid transparent;
       font-weight: bold;
       color: var(--text-color);
-      font-size: 1rem;
+      font-size: 0.95rem;
       flex: 1;
-      min-width: 180px;
+      min-width: 150px;
     }
     .day-input:focus {
       background: white;
@@ -366,33 +374,103 @@
     .base-input {
       background: #ffffff;
       border: 1px solid #ffdbe3;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: #9c6c77;
-      padding: 4px 8px;
-      border-radius: 6px;
-      width: 140px;
+      padding: 3px 6px;
+      border-radius: 5px;
+      width: 130px;
     }
 
-    /* 表格樣式 */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
+    /* 摺疊項目卡片設計 (Popup / Accordion 風格) */
+    .item-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin: 8px;
+      overflow: hidden;
+      transition: all 0.2s;
     }
 
-    th, td {
-      padding: 10px 12px;
-      border-bottom: 1px solid #f0d5dc;
-      font-size: 0.9rem;
+    .item-summary-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: #ffffff;
+      cursor: pointer;
+      gap: 8px;
+      user-select: none;
+    }
+    .item-summary-bar:hover {
+      background: #fff8f9;
     }
 
-    th {
-      background: #f4eaed;
-      color: var(--text-muted);
+    .item-summary-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .item-badge-tag {
+      background: #fff0f3;
+      color: #e65c7b;
+      border: 1px solid #ffd1d5;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.75rem;
       font-weight: 600;
+      white-space: nowrap;
     }
 
-    /* 表格欄位輸入框 */
+    .item-summary-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-color);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .item-summary-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #e0566d;
+      white-space: nowrap;
+    }
+
+    .expand-arrow {
+      color: #b07d89;
+      font-size: 0.8rem;
+      transition: transform 0.2s;
+    }
+
+    /* 展開後的詳細編輯內容區塊 */
+    .item-details-content {
+      display: none;
+      padding: 10px 12px;
+      background: #faf5f6;
+      border-top: 1px solid var(--border-color);
+      flex-direction: column;
+      gap: 8px;
+    }
+    .item-card.expanded .item-details-content {
+      display: flex;
+    }
+    .item-card.expanded .expand-arrow {
+      transform: rotate(180deg);
+    }
+
+    .detail-grid-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
     .cell-input {
       background: #ffffff;
       border: 1px solid var(--border-color);
@@ -400,6 +478,7 @@
       padding: 6px;
       border-radius: 6px;
       color: var(--text-color);
+      font-size: 0.85rem;
     }
     .cell-input:focus {
       border-color: var(--accent-pink);
@@ -411,15 +490,14 @@
       background-repeat: no-repeat;
       background-position: right 6px center;
       background-size: 12px;
-      padding-right: 22px;
-      font-size: 0.85rem;
+      padding-right: 20px;
     }
 
     /* 備註與超連結包裝區塊 */
     .note-container {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
 
     .note-preview-area {
@@ -435,26 +513,22 @@
       background: #fff0f3;
       color: #e65c7b;
       border: 1px solid #ffd1d5;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 0.8rem;
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-size: 0.75rem;
       text-decoration: none;
       font-weight: 600;
       width: fit-content;
-      transition: all 0.2s;
     }
-
     .link-badge:hover {
       background: #ffe0e6;
-      border-color: var(--accent-pink);
-      transform: translateY(-1px);
     }
 
     /* 費用輸入群組 */
     .cost-box {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
     .input-group {
@@ -467,8 +541,8 @@
     }
 
     .curr-tag {
-      padding: 4px 6px;
-      font-size: 0.8rem;
+      padding: 3px 5px;
+      font-size: 0.75rem;
       background: #f0e1e5;
       color: #7a686e;
     }
@@ -477,8 +551,9 @@
       border: none;
       background: transparent;
       padding: 4px;
-      width: 70px;
+      width: 65px;
       color: var(--text-color);
+      font-size: 0.85rem;
     }
 
     .twd-val {
@@ -486,24 +561,8 @@
       font-weight: bold;
     }
 
-    .del-row-btn {
-      background: #fff0f1;
-      color: var(--danger-color);
-      border: 1px solid #ffd1d5;
-      padding: 4px 10px;
-      font-size: 0.8rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-    .del-row-btn:hover {
-      background: var(--danger-color);
-      color: white;
-    }
-
     .add-row-container {
-      padding: 10px;
+      padding: 8px;
       text-align: center;
       background: #ffffff;
     }
@@ -513,10 +572,11 @@
       border: 1px dashed #e6b8c3;
       color: #b07d89;
       width: 100%;
-      padding: 8px;
+      padding: 6px;
       border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
+      font-size: 0.85rem;
     }
     .add-row-btn:hover, .add-day-btn:hover, .add-part-btn:hover {
       background: #fff0f3;
@@ -526,57 +586,19 @@
 
     .global-actions {
       text-align: center;
-      margin: 25px 0;
+      margin: 20px 0;
       display: flex;
-      gap: 15px;
+      gap: 10px;
       justify-content: center;
       flex-wrap: wrap;
     }
 
-    /* 響應式手機優化 */
+    /* 響應式手機優化調整 */
     @media (max-width: 768px) {
-      .top-panel { flex-direction: column; align-items: stretch; padding: 12px 15px; }
-      .control-group { justify-content: space-between; }
+      .top-panel { padding: 10px 12px; }
       .flight-grid { grid-template-columns: 1fr; }
-      .flight-inputs { grid-template-columns: 1fr; gap: 8px; }
-      
-      .part-header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-      }
-      .part-header .clearable-input-wrapper { width: 100%; }
-      .part-actions { display: flex; justify-content: flex-end; gap: 8px; }
-
-      table, thead, tbody, th, td, tr { display: block; width: 100%; box-sizing: border-box; }
-      thead { display: none; }
-      tr {
-        margin-bottom: 12px;
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
-        background: #ffffff;
-        padding: 10px;
-      }
-      td { 
-        border: none; 
-        padding: 6px 0; 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-      }
-      td::before { 
-        content: attr(data-label); 
-        color: var(--text-muted); 
-        font-weight: 600; 
-        min-width: 80px;
-        flex-shrink: 0;
-      }
-      .col-type, .col-detail, .col-handle { width: 100% !important; min-width: 100% !important; }
-      td.col-type > div { width: calc(100% - 90px); justify-content: flex-end; }
-      td.col-handle { justify-content: flex-start; }
-      
-      .cost-box { width: calc(100% - 90px); justify-content: flex-end; }
-      .note-container { width: calc(100% - 90px); }
+      .flight-inputs { grid-template-columns: 1fr; gap: 6px; }
+      .detail-grid-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -587,42 +609,51 @@
   <!-- 頂部控制面板 -->
   <div class="top-panel">
     <div class="budget-summary-container">
-      <div class="budget-summary">
-        🌸 總預算估算：<span id="grand-total-twd">NT$ 0</span>
+      <div class="budget-summary-row">
+        <div class="budget-summary">
+          🌸 總預算：<span id="grand-total-twd">NT$ 0</span>
+        </div>
+        <button class="toggle-details-btn" onclick="toggleCategoryBreakdown()">分類明細 ▾</button>
       </div>
+      <!-- 點擊才展開的動態分類明細 -->
       <div id="category-breakdown" class="category-breakdown"></div>
     </div>
     <div class="control-group">
-      <label style="font-size: 0.9rem; font-weight: 600;">匯率 (JPY➔TWD):</label>
-      <div class="clearable-input-wrapper" style="width: 100px;">
+      <label style="font-size: 0.85rem; font-weight: 600;">匯率:</label>
+      <div class="clearable-input-wrapper" style="width: 80px;">
         <input type="number" id="global-rate" value="0.22" step="0.01" oninput="recalculateAll()">
         <button class="clear-btn" onclick="clearInput(this)">×</button>
       </div>
-      <button class="btn-success" onclick="saveDataToFirebase()">☁️ 同步雲端</button>
-      <button class="btn-danger" onclick="resetData()">重置</button>
+      <button class="btn-primary" onclick="toggleAllItems(true)" style="padding: 6px 10px; font-size: 0.8rem;" title="一鍵全開">全開</button>
+      <button class="btn-primary" onclick="toggleAllItems(false)" style="padding: 6px 10px; font-size: 0.8rem;" title="一鍵全收">全收</button>
+      <button class="btn-success" onclick="saveDataToFirebase()" style="padding: 6px 10px; font-size: 0.8rem;">☁️ 同步</button>
+      <button class="btn-danger" onclick="resetData()" style="padding: 6px 10px; font-size: 0.8rem;">重置</button>
     </div>
   </div>
 
-  <!-- 航班與出國資訊面板 -->
+  <!-- 航班與出國資訊面板 (可點標題折疊) -->
   <div class="flight-panel">
-    <div class="flight-panel-title">✈️ 航班與出國資訊</div>
-    <div class="flight-grid">
+    <div class="flight-panel-title" onclick="toggleFlightPanel()">
+      <span>✈️ 航班與出國資訊</span>
+      <span id="flight-toggle-arrow" style="font-size: 0.8rem; color: #b07d89;">▾</span>
+    </div>
+    <div id="flight-content-grid" class="flight-grid" style="display: none;">
       <!-- 去程航班 -->
       <div class="flight-card">
-        <div class="flight-card-header">🛫 去程航班 (Departure)</div>
+        <div class="flight-card-header">🛫 去程航班</div>
         <div class="flight-inputs">
-          <div class="clearable-input-wrapper"><input type="date" id="flight-out-date" placeholder="日期 12/01" /></div>
-          <div class="clearable-input-wrapper"><input type="time" id="flight-out-time" placeholder="時間 08:30" /></div>
-          <div class="clearable-input-wrapper"><input type="text" id="flight-out-no" placeholder="班機 JX820" /></div>
+          <div class="clearable-input-wrapper"><input type="date" id="flight-out-date" placeholder="日期" /></div>
+          <div class="clearable-input-wrapper"><input type="time" id="flight-out-time" placeholder="時間" /></div>
+          <div class="clearable-input-wrapper"><input type="text" id="flight-out-no" placeholder="班機" /></div>
         </div>
       </div>
       <!-- 回程航班 -->
       <div class="flight-card">
-        <div class="flight-card-header">🛬 回程航班 (Return)</div>
+        <div class="flight-card-header">🛬 回程航班</div>
         <div class="flight-inputs">
-          <div class="clearable-input-wrapper"><input type="date" id="flight-in-date" placeholder="日期 12/05" /></div>
-          <div class="clearable-input-wrapper"><input type="time" id="flight-in-time" placeholder="時間 15:45" /></div>
-          <div class="clearable-input-wrapper"><input type="text" id="flight-in-no" placeholder="班機 JX821" /></div>
+          <div class="clearable-input-wrapper"><input type="date" id="flight-in-date" placeholder="日期" /></div>
+          <div class="clearable-input-wrapper"><input type="time" id="flight-in-time" placeholder="時間" /></div>
+          <div class="clearable-input-wrapper"><input type="text" id="flight-in-no" placeholder="班機" /></div>
         </div>
       </div>
     </div>
@@ -633,7 +664,7 @@
 
   <!-- 全域新增按鈕 -->
   <div class="global-actions">
-    <button class="btn-primary add-part-btn" onclick="addPart()" style="padding: 10px 20px; border-radius: 10px; width: auto;">➕ 新增區塊 (PART)</button>
+    <button class="btn-primary add-part-btn" onclick="addPart()" style="padding: 8px 16px; border-radius: 8px; width: auto; font-size: 0.85rem;">➕ 新增區塊 (PART)</button>
   </div>
 
 </div>
@@ -653,7 +684,7 @@
             title: "Day 1 抵達與市區漫步",
             base: "札幌車站周邊",
             items: {
-              item1: { type: "交通", detail: "機場快線車票", jpy: 1150, twd: 253, note: "https://maps.app.goo.gl/example\nhttps://www.booking.com/example" }
+              item1: { type: "交通", detail: "機場快線車票", jpy: 1150, twd: 253, note: "https://maps.app.goo.gl/example" }
             }
           }
         }
@@ -668,18 +699,50 @@
     return isNaN(val) || val <= 0 ? 0.22 : val;
   }
 
+  function toggleCategoryBreakdown() {
+    const el = document.getElementById('category-breakdown');
+    el.classList.toggle('show');
+  }
+
+  function toggleFlightPanel() {
+    const grid = document.getElementById('flight-content-grid');
+    const arrow = document.getElementById('flight-toggle-arrow');
+    if (grid.style.display === 'none') {
+      grid.style.display = 'grid';
+      arrow.style.transform = 'rotate(180deg)';
+    } else {
+      grid.style.display = 'none';
+      arrow.style.transform = 'rotate(0deg)';
+    }
+  }
+
+  function toggleItemCard(headerEl) {
+    const card = headerEl.closest('.item-card');
+    card.classList.toggle('expanded');
+  }
+
+  function toggleAllItems(expand) {
+    document.querySelectorAll('.item-card').forEach(card => {
+      if (expand) {
+        card.classList.add('expanded');
+      } else {
+        card.classList.remove('expanded');
+      }
+    });
+  }
+
   function wrapClearable(type, className, value, placeholder = '', rows = 1) {
     if (type === 'textarea') {
       return `
         <div class="clearable-input-wrapper">
-          <textarea class="${className}" placeholder="${placeholder}" rows="${rows}" oninput="updateNotePreview(this);">${value || ''}</textarea>
+          <textarea class="${className}" placeholder="${placeholder}" rows="${rows}" oninput="updateItemSummary(this); updateNotePreview(this);">${value || ''}</textarea>
           <button class="clear-btn" onclick="clearInput(this)">×</button>
         </div>
       `;
     } else {
       return `
         <div class="clearable-input-wrapper">
-          <input type="${type}" class="${className}" value="${value !== undefined ? value : ''}" placeholder="${placeholder}">
+          <input type="${type}" class="${className}" value="${value !== undefined ? value : ''}" placeholder="${placeholder}" oninput="updateItemSummary(this)">
           <button class="clear-btn" onclick="clearInput(this)">×</button>
         </div>
       `;
@@ -700,22 +763,23 @@
     }
 
     return `
-      <div style="display: flex; gap: 3px; align-items: center; width: 100%;">
-        <select class="cell-input row-type" onchange="updateGrandTotal()" style="flex: 1; padding-right: 18px;">
+      <div style="display: flex; gap: 4px; align-items: center; width: 100%;">
+        <select class="cell-input row-type" onchange="updateItemSummary(this); updateGrandTotal()" style="flex: 1; padding-right: 18px;">
           ${optionsHtml}
         </select>
-        <button type="button" class="btn-primary" onclick="switchToCustomCategory(this)" title="手動輸入" style="padding: 6px 6px; font-size: 0.75rem; border-radius: 6px; white-space: nowrap;">✏️</button>
+        <button type="button" class="btn-primary" onclick="switchToCustomCategory(this)" title="手動輸入" style="padding: 4px 6px; font-size: 0.75rem; border-radius: 6px; white-space: nowrap;">✏️</button>
       </div>
     `;
   }
 
   function switchToCustomCategory(btn) {
-    const td = btn.closest('td');
-    const currentVal = td.querySelector('select, input')?.value || '';
-    td.innerHTML = `
-      <div style="display: flex; gap: 3px; align-items: center; width: 100%;">
+    const container = btn.closest('div');
+    const select = container.querySelector('select');
+    const currentVal = select ? select.value : '';
+    container.outerHTML = `
+      <div style="display: flex; gap: 4px; align-items: center; width: 100%;">
         <div class="clearable-input-wrapper" style="flex: 1;">
-          <input type="text" class="cell-input row-type" value="${currentVal}" placeholder="自訂類別" oninput="updateGrandTotal()">
+          <input type="text" class="cell-input row-type" value="${currentVal}" placeholder="自訂類別" oninput="updateItemSummary(this); updateGrandTotal()">
           <button class="clear-btn" onclick="clearInput(this)">×</button>
         </div>
         <button type="button" class="btn-danger" onclick="switchToSelectCategory(this)" title="切換回選單" style="padding: 4px 6px; font-size: 0.75rem; border-radius: 6px; white-space: nowrap;">📋</button>
@@ -725,16 +789,16 @@
   }
 
   function switchToSelectCategory(btn) {
-    const td = btn.closest('td');
-    const input = td.querySelector('input');
+    const container = btn.closest('div');
+    const input = container.querySelector('input');
     const currentVal = input ? input.value : '';
-    td.innerHTML = renderCategorySelect(currentVal);
+    container.outerHTML = renderCategorySelect(currentVal);
     updateGrandTotal();
   }
 
   function clearInput(btn) {
     const wrapper = btn.closest('.clearable-input-wrapper');
-    const input = wrapper.querySelector('input, textarea');
+    const input = wrapper.querySelector('input, textarea, select');
     if (input) {
       input.value = '';
       input.dispatchEvent(new Event('input', { bubbles: true }));
@@ -765,6 +829,23 @@
     return html;
   }
 
+  function updateItemSummary(inputEl) {
+    const card = inputEl.closest('.item-card');
+    if (!card) return;
+    
+    const typeEl = card.querySelector('.row-type');
+    const detailEl = card.querySelector('.row-detail');
+    const twdEl = card.querySelector('.twd-val');
+
+    const type = typeEl ? (typeEl.value || '未分類') : '未分類';
+    const detail = detailEl ? (detailEl.value || '未命名項目') : '未命名項目';
+    const twd = twdEl ? (twdEl.value || 0) : 0;
+
+    card.querySelector('.item-badge-tag').innerText = type;
+    card.querySelector('.item-summary-title').innerText = detail;
+    card.querySelector('.item-summary-amount').innerText = 'NT$ ' + Number(twd).toLocaleString('zh-TW');
+  }
+
   function collectDataFromDOM() {
     const newData = {
       rate: document.getElementById('global-rate').value,
@@ -790,14 +871,14 @@
         const dayBase = dayEl.querySelector('.base-input').value;
         newData.parts[partKey].days[dayKey] = { title: dayTitle, base: dayBase, items: {} };
 
-        dayEl.querySelectorAll('tbody tr').forEach((rowEl, iIdx) => {
+        dayEl.querySelectorAll('.item-card').forEach((itemEl, iIdx) => {
           const itemKey = `item${iIdx + 1}`;
-          const typeEl = rowEl.querySelector('.row-type');
+          const typeEl = itemEl.querySelector('.row-type');
           const type = typeEl ? typeEl.value : '交通';
-          const detail = rowEl.querySelector('.row-detail').value;
-          const jpy = parseFloat(rowEl.querySelector('.jpy-val').value) || 0;
-          const twd = parseFloat(rowEl.querySelector('.twd-val').value) || 0;
-          const note = rowEl.querySelector('.row-note').value;
+          const detail = itemEl.querySelector('.row-detail').value;
+          const jpy = parseFloat(itemEl.querySelector('.jpy-val').value) || 0;
+          const twd = parseFloat(itemEl.querySelector('.twd-val').value) || 0;
+          const note = itemEl.querySelector('.row-note').value;
 
           newData.parts[partKey].days[dayKey].items[itemKey] = { type, detail, jpy, twd, note };
         });
@@ -844,27 +925,48 @@
           const linkHtml = renderLinkButtons(rawNote);
 
           itemsHtml += `
-            <tr draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropItem(event)" ondragend="dragEnd(event)">
-              <td class="col-handle" data-label="排序">
-                <span class="drag-handle" title="按住拖曳調整順序">☰</span>
-              </td>
-              <td class="col-type" data-label="類別">${renderCategorySelect(item.type || '交通')}</td>
-              <td class="col-detail" data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', item.detail || '', '細項 / 規劃')}</td>
-              <td data-label="預估花費">
-                <div class="cost-box">
-                  <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="${item.jpy || 0}" oninput="jpyInputChanged(this)"></div>
-                  <span style="color:var(--text-muted)">➔</span>
-                  <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="${twd}" oninput="twdInputChanged(this)"></div>
+            <div class="item-card">
+              <div class="item-summary-bar" onclick="toggleItemCard(this)">
+                <div class="item-summary-left">
+                  <span class="item-badge-tag">${item.type || '交通'}</span>
+                  <span class="item-summary-title">${item.detail || '未命名項目'}</span>
                 </div>
-              </td>
-              <td data-label="備註/超連結">
-                <div class="note-container">
-                  ${wrapClearable('textarea', 'cell-input row-note', rawNote, '說明或貼上網址', 2)}
-                  <div class="note-preview-area">${linkHtml}</div>
+                <div class="item-summary-right">
+                  <span class="item-summary-amount">NT$ ${Number(twd).toLocaleString('zh-TW')}</span>
+                  <span class="expand-arrow">▼</span>
                 </div>
-              </td>
-              <td style="text-align: center;" data-label="操作"><button class="del-row-btn" onclick="deleteRow(this)">刪除</button></td>
-            </tr>
+              </div>
+              <div class="item-details-content">
+                <div class="detail-grid-row">
+                  <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">類別：</label>
+                    ${renderCategorySelect(item.type || '交通')}
+                  </div>
+                  <div>
+                    <label style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">細項名稱：</label>
+                    ${wrapClearable('text', 'cell-input row-detail', item.detail || '', '細項 / 規劃')}
+                  </div>
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">預估花費 (日幣 ⇄ 台幣)：</label>
+                  <div class="cost-box">
+                    <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="${item.jpy || 0}" oninput="jpyInputChanged(this)"></div>
+                    <span style="color:var(--text-muted)">➔</span>
+                    <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="${twd}" oninput="twdInputChanged(this)"></div>
+                  </div>
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">備註 / 超連結：</label>
+                  <div class="note-container">
+                    ${wrapClearable('textarea', 'cell-input row-note', rawNote, '說明或貼上網址', 2)}
+                    <div class="note-preview-area">${linkHtml}</div>
+                  </div>
+                </div>
+                <div style="text-align: right; margin-top: 4px;">
+                  <button class="btn-danger" onclick="deleteRow(this)">刪除此項目</button>
+                </div>
+              </div>
+            </div>
           `;
         });
 
@@ -875,19 +977,7 @@
               ${wrapClearable('text', 'base-input', day.base || '', 'Base：住宿地點')}
               <button class="btn-danger" onclick="deleteDay(this)">刪除此日</button>
             </div>
-            <table>
-              <thead>
-                <tr>
-                  <th class="col-handle"></th>
-                  <th class="col-type">類別</th>
-                  <th class="col-detail">費用細項 / 規劃</th>
-                  <th>預估花費 (日幣 ⇄ 台幣)</th>
-                  <th>備註 / 說明 (含自動網址)</th>
-                  <th style="width: 60px;"></th>
-                </tr>
-              </thead>
-              <tbody>${itemsHtml}</tbody>
-            </table>
+            <div class="day-items-container">${itemsHtml}</div>
             <div class="add-row-container"><button class="add-row-btn" onclick="addRow(this)">+ 新增此日行程</button></div>
           </div>
         `;
@@ -897,7 +987,7 @@
         <div class="part-header">
           ${wrapClearable('text', 'part-title-input', part.title || '', '分區標題')}
           <div class="part-actions">
-            <button onclick="addDay(this)" class="btn-primary" style="padding: 6px 12px; font-size: 0.85rem; border-radius: 6px;">+ 新增天數</button>
+            <button onclick="addDay(this)" class="btn-primary" style="padding: 5px 10px; font-size: 0.8rem; border-radius: 6px;">+ 新增天數</button>
             <button onclick="deletePart(this)" class="btn-danger">刪除區塊</button>
           </div>
         </div>
@@ -909,58 +999,6 @@
     updateGrandTotal();
   }
 
-  /* ================= 拖曳排序事件邏輯 ================= */
-  let draggedRow = null;
-
-  function dragStart(e) {
-    draggedRow = e.target.closest('tr');
-    draggedRow.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'move';
-  }
-
-  function dragOver(e) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    const tr = e.target.closest('tr');
-    if (tr && tr !== draggedRow) {
-      tr.classList.add('drag-over');
-    }
-  }
-
-  function dragLeave(e) {
-    const tr = e.target.closest('tr');
-    if (tr) {
-      tr.classList.remove('drag-over');
-    }
-  }
-
-  function dropItem(e) {
-    e.preventDefault();
-    const targetTr = e.target.closest('tr');
-    if (targetTr) {
-      targetTr.classList.remove('drag-over');
-      if (draggedRow && targetTr !== draggedRow) {
-        const tbody = targetTr.parentNode;
-        const rect = targetTr.getBoundingClientRect();
-        const next = (e.clientY - rect.top) / (rect.bottom - rect.top) > 0.5;
-        if (next) {
-          tbody.insertBefore(draggedRow, targetTr.nextSibling);
-        } else {
-          tbody.insertBefore(draggedRow, targetTr);
-        }
-        updateGrandTotal();
-      }
-    }
-  }
-
-  function dragEnd(e) {
-    if (draggedRow) {
-      draggedRow.classList.remove('dragging');
-    }
-    document.querySelectorAll('tr.drag-over').forEach(tr => tr.classList.remove('drag-over'));
-    draggedRow = null;
-  }
-
   function updateNotePreview(textarea) {
     const container = textarea.closest('.note-container');
     const previewArea = container.querySelector('.note-preview-area');
@@ -968,29 +1006,32 @@
   }
 
   function jpyInputChanged(input) {
-    const row = input.closest('tr');
+    const card = input.closest('.item-card');
     const jpy = parseFloat(input.value) || 0;
-    const twdInput = row.querySelector('.twd-val');
+    const twdInput = card.querySelector('.twd-val');
     twdInput.value = Math.round(jpy * getRate());
+    updateItemSummary(input);
     updateGrandTotal();
   }
 
   function twdInputChanged(input) {
-    const row = input.closest('tr');
+    const card = input.closest('.item-card');
     const twd = parseFloat(input.value) || 0;
-    const jpyInput = row.querySelector('.jpy-val');
+    const jpyInput = card.querySelector('.jpy-val');
     const rate = getRate();
     if (rate > 0) {
       jpyInput.value = Math.round(twd / rate);
     }
+    updateItemSummary(input);
     updateGrandTotal();
   }
 
   function recalculateAll() {
     const rate = getRate();
-    document.querySelectorAll('tbody tr').forEach(row => {
-      const jpy = parseFloat(row.querySelector('.jpy-val').value) || 0;
-      row.querySelector('.twd-val').value = Math.round(jpy * rate);
+    document.querySelectorAll('.item-card').forEach(card => {
+      const jpy = parseFloat(card.querySelector('.jpy-val').value) || 0;
+      card.querySelector('.twd-val').value = Math.round(jpy * rate);
+      updateItemSummary(card.querySelector('.jpy-val'));
     });
     updateGrandTotal();
   }
@@ -999,12 +1040,12 @@
     let grandTotal = 0;
     const categoryTotals = {};
 
-    document.querySelectorAll('tbody tr').forEach(row => {
-      const typeEl = row.querySelector('.row-type');
+    document.querySelectorAll('.item-card').forEach(card => {
+      const typeEl = card.querySelector('.row-type');
       let cat = typeEl ? typeEl.value.trim() : '未分類';
       if (!cat) cat = '未分類';
 
-      const twdVal = parseFloat(row.querySelector('.twd-val').value) || 0;
+      const twdVal = parseFloat(card.querySelector('.twd-val').value) || 0;
       grandTotal += twdVal;
 
       if (!categoryTotals[cat]) {
@@ -1042,42 +1083,57 @@
   }
 
   function deleteRow(btn) {
-    btn.closest('tr').remove();
+    btn.closest('.item-card').remove();
     updateGrandTotal();
   }
 
   function addRow(btn) {
-    const tbody = btn.closest('.day-card').querySelector('tbody');
-    const tr = document.createElement('tr');
-    tr.setAttribute('draggable', 'true');
-    tr.setAttribute('ondragstart', 'dragStart(event)');
-    tr.setAttribute('ondragover', 'dragOver(event)');
-    tr.setAttribute('ondragleave', 'dragLeave(event)');
-    tr.setAttribute('ondrop', 'dropItem(event)');
-    tr.setAttribute('ondragend', 'dragEnd(event)');
-
-    tr.innerHTML = `
-      <td class="col-handle" data-label="排序">
-        <span class="drag-handle" title="按住拖曳調整順序">☰</span>
-      </td>
-      <td class="col-type" data-label="類別">${renderCategorySelect('交通')}</td>
-      <td class="col-detail" data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', '新項目', '細項 / 規劃')}</td>
-      <td data-label="預估花費">
-        <div class="cost-box">
-          <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="0" oninput="jpyInputChanged(this)"></div>
-          <span style="color:var(--text-muted)">➔</span>
-          <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="0" oninput="twdInputChanged(this)"></div>
+    const container = btn.closest('.day-card').querySelector('.day-items-container');
+    const itemCard = document.createElement('div');
+    itemCard.className = 'item-card expanded'; // 新增時預設展開方便直接編輯
+    itemCard.innerHTML = `
+      <div class="item-summary-bar" onclick="toggleItemCard(this)">
+        <div class="item-summary-left">
+          <span class="item-badge-tag">交通</span>
+          <span class="item-summary-title">新項目</span>
         </div>
-      </td>
-      <td data-label="備註/超連結">
-        <div class="note-container">
-          ${wrapClearable('textarea', 'cell-input row-note', '', '說明或貼上網址', 2)}
-          <div class="note-preview-area"></div>
+        <div class="item-summary-right">
+          <span class="item-summary-amount">NT$ 0</span>
+          <span class="expand-arrow">▼</span>
         </div>
-      </td>
-      <td style="text-align: center;" data-label="操作"><button class="del-row-btn" onclick="deleteRow(this)">刪除</button></td>
+      </div>
+      <div class="item-details-content">
+        <div class="detail-grid-row">
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">類別：</label>
+            ${renderCategorySelect('交通')}
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">細項名稱：</label>
+            ${wrapClearable('text', 'cell-input row-detail', '新項目', '細項 / 規劃')}
+          </div>
+        </div>
+        <div>
+          <label style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">預估花費 (日幣 ⇄ 台幣)：</label>
+          <div class="cost-box">
+            <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="0" oninput="jpyInputChanged(this)"></div>
+            <span style="color:var(--text-muted)">➔</span>
+            <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="0" oninput="twdInputChanged(this)"></div>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">備註 / 超連結：</label>
+          <div class="note-container">
+            ${wrapClearable('textarea', 'cell-input row-note', '', '說明或貼上網址', 2)}
+            <div class="note-preview-area"></div>
+          </div>
+        </div>
+        <div style="text-align: right; margin-top: 4px;">
+          <button class="btn-danger" onclick="deleteRow(this)">刪除此項目</button>
+        </div>
+      </div>
     `;
-    tbody.appendChild(tr);
+    container.appendChild(itemCard);
     updateGrandTotal();
   }
 
@@ -1097,41 +1153,50 @@
         ${wrapClearable('text', 'base-input', '住宿地點', 'Base：住宿地點')}
         <button class="btn-danger" onclick="deleteDay(this)">刪除此日</button>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th class="col-handle"></th>
-            <th class="col-type">類別</th>
-            <th class="col-detail">費用細項 / 規劃</th>
-            <th>預估花費 (日幣 ⇄ 台幣)</th>
-            <th>備註 / 說明 (含自動網址)</th>
-            <th style="width: 60px;"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropItem(event)" ondragend="dragEnd(event)">
-            <td class="col-handle" data-label="排序">
-              <span class="drag-handle" title="按住拖曳調整順序">☰</span>
-            </td>
-            <td class="col-type" data-label="類別">${renderCategorySelect('交通')}</td>
-            <td class="col-detail" data-label="費用細項">${wrapClearable('text', 'cell-input row-detail', '新項目', '細項 / 規劃')}</td>
-            <td data-label="預估花費">
+      <div class="day-items-container">
+        <div class="item-card expanded">
+          <div class="item-summary-bar" onclick="toggleItemCard(this)">
+            <div class="item-summary-left">
+              <span class="item-badge-tag">交通</span>
+              <span class="item-summary-title">新項目</span>
+            </div>
+            <div class="item-summary-right">
+              <span class="item-summary-amount">NT$ 0</span>
+              <span class="expand-arrow">▼</span>
+            </div>
+          </div>
+          <div class="item-details-content">
+            <div class="detail-grid-row">
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">類別：</label>
+                ${renderCategorySelect('交通')}
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">細項名稱：</label>
+                ${wrapClearable('text', 'cell-input row-detail', '新項目', '細項 / 規劃')}
+              </div>
+            </div>
+            <div>
+              <label style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">預估花費 (日幣 ⇄ 台幣)：</label>
               <div class="cost-box">
                 <div class="input-group"><span class="curr-tag">JPY</span><input type="number" class="cost-input jpy-val" value="0" oninput="jpyInputChanged(this)"></div>
                 <span style="color:var(--text-muted)">➔</span>
                 <div class="input-group"><span class="curr-tag">NT$</span><input type="number" class="cost-input twd-val" value="0" oninput="twdInputChanged(this)"></div>
               </div>
-            </td>
-            <td data-label="備註/超連結">
+            </div>
+            <div>
+              <label style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">備註 / 超連結：</label>
               <div class="note-container">
                 ${wrapClearable('textarea', 'cell-input row-note', '', '說明或貼上網址', 2)}
                 <div class="note-preview-area"></div>
               </div>
-            </td>
-            <td style="text-align: center;" data-label="操作"><button class="del-row-btn" onclick="deleteRow(this)">刪除</button></td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+            <div style="text-align: right; margin-top: 4px;">
+              <button class="btn-danger" onclick="deleteRow(this)">刪除此項目</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="add-row-container"><button class="add-row-btn" onclick="addRow(this)">+ 新增此日行程</button></div>
     `;
     daysContainer.appendChild(dayDiv);
@@ -1187,7 +1252,7 @@
     const currentStructuredData = collectDataFromDOM();
     try {
       await set(ref(db, "japan_travel"), currentStructuredData);
-      alert("✅ 航班與行程已成功同步至雲端！");
+      alert("✅ 行程資料已成功同步至雲端！");
     } catch (err) {
       console.error(err);
       alert("❌ 同步失敗：" + err.message);
