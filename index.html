@@ -151,6 +151,9 @@
       justify-content: space-between;
       border-bottom: 2px solid #ffdbe3;
       padding-bottom: 6px;
+    }
+    
+    .flight-panel-title {
       cursor: pointer;
     }
 
@@ -568,25 +571,52 @@
       color: var(--accent-pink);
     }
 
-    /* 行李清單專屬樣式 */
+    /* 行李清單專屬樣式 (可摺疊分類卡片) */
     .checklist-category-card {
       background: #faf5f6;
       border: 1px solid var(--border-color);
       border-radius: 10px;
-      padding: 10px;
       margin-bottom: 10px;
+      overflow: hidden;
+      transition: all 0.2s;
     }
-    .checklist-cat-header {
+    .checklist-cat-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: linear-gradient(to right, #ffeef2, #faf5f6);
+      cursor: pointer;
+      gap: 8px;
+      user-select: none;
+      border-bottom: 1px dashed #ffdbe3;
+    }
+    .checklist-cat-header-bar:hover {
+      background: #ffe6ec;
+    }
+    .checklist-cat-title-input {
       font-weight: bold;
       font-size: 0.9rem;
       color: #9c4d63;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      border-bottom: 1px dashed #ffdbe3;
-      padding-bottom: 4px;
+      background: transparent;
+      border: 1px solid transparent;
+      flex: 1;
     }
+    .checklist-cat-title-input:focus {
+      background: white;
+      border-color: var(--accent-pink);
+    }
+    .checklist-cat-content {
+      padding: 10px;
+      display: none; /* 預設收合 */
+    }
+    .checklist-category-card.expanded .checklist-cat-content {
+      display: block; /* 展開狀態 */
+    }
+    .checklist-category-card.expanded .expand-arrow {
+      transform: rotate(180deg);
+    }
+
     .checklist-items-list {
       display: flex;
       flex-direction: column;
@@ -750,9 +780,9 @@
   <!-- 行李檢核清單檢視容器 (Checklist) -->
   <div id="view-checklist-container" style="display: none;">
     <div class="checklist-panel">
-      <div class="checklist-panel-title" onclick="toggleChecklistPanel()">
+      <!-- 區塊標題固定不折疊 -->
+      <div class="checklist-panel-title">
         <span>🧳 行李檢核清單 (Checklist)</span>
-        <span id="checklist-toggle-arrow" style="font-size: 0.8rem; color: #b07d89;">▾</span>
       </div>
       <div id="checklist-content-container">
         <div id="checklist-categories-container"></div>
@@ -830,18 +860,6 @@
     }
   }
 
-  function toggleChecklistPanel() {
-    const container = document.getElementById('checklist-content-container');
-    const arrow = document.getElementById('checklist-toggle-arrow');
-    if (container.style.display === 'none') {
-      container.style.display = 'block';
-      arrow.style.transform = 'rotate(180deg)';
-    } else {
-      container.style.display = 'none';
-      arrow.style.transform = 'rotate(0deg)';
-    }
-  }
-
   function switchView(viewName) {
     const itineraryContainer = document.getElementById('view-itinerary-container');
     const checklistContainer = document.getElementById('view-checklist-container');
@@ -866,8 +884,20 @@
     card.classList.toggle('expanded');
   }
 
+  function toggleChecklistCategoryCard(headerEl) {
+    const card = headerEl.closest('.checklist-category-card');
+    card.classList.toggle('expanded');
+  }
+
   function toggleAllItems(expand) {
     document.querySelectorAll('.item-card').forEach(card => {
+      if (expand) {
+        card.classList.add('expanded');
+      } else {
+        card.classList.remove('expanded');
+      }
+    });
+    document.querySelectorAll('.checklist-category-card').forEach(card => {
       if (expand) {
         card.classList.add('expanded');
       } else {
@@ -1044,8 +1074,9 @@
     // 收集行李清單
     document.querySelectorAll('.checklist-category-card').forEach((catEl, cIdx) => {
       const catKey = `cat${cIdx + 1}`;
-      const catTitle = catEl.querySelector('.checklist-cat-title').value;
-      newData.checklist[catKey] = { title: catTitle, items: {} };
+      const catTitle = catEl.querySelector('.checklist-cat-title-input').value;
+      const isExpanded = catEl.classList.contains('expanded');
+      newData.checklist[catKey] = { title: catTitle, expanded: isExpanded, items: {} };
 
       catEl.querySelectorAll('.checklist-item-row').forEach((itemEl, iIdx) => {
         const itemKey = `item${iIdx + 1}`;
@@ -1191,19 +1222,25 @@
         `;
       });
 
+      const expandedClass = cat.expanded ? 'expanded' : '';
       const catDiv = document.createElement('div');
-      catDiv.className = 'checklist-category-card';
+      catDiv.className = `checklist-category-card ${expandedClass}`;
       catDiv.innerHTML = `
-        <div class="checklist-cat-header">
-          <div class="clearable-input-wrapper" style="max-width: 65%;">
-            <input type="text" class="cell-input checklist-cat-title" value="${cat.title || '行李分類'}" placeholder="分類名稱">
+        <div class="checklist-cat-header-bar" onclick="toggleChecklistCategoryCard(this)">
+          <div class="clearable-input-wrapper" style="max-width: 65%;" onclick="event.stopPropagation()">
+            <input type="text" class="cell-input checklist-cat-title-input" value="${cat.title || '行李分類'}" placeholder="分類名稱">
             <button class="clear-btn" onclick="clearInput(this)">×</button>
           </div>
-          <button class="btn-danger" onclick="deleteChecklistCategory(this)">刪除分類</button>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn-danger" onclick="event.stopPropagation(); deleteChecklistCategory(this)">刪除分類</button>
+            <span class="expand-arrow">▼</span>
+          </div>
         </div>
-        <div class="checklist-items-list">${itemsHtml}</div>
-        <div style="margin-top: 6px; text-align: center;">
-          <button class="add-row-btn" onclick="addChecklistItem(this)" style="padding: 4px; font-size: 0.8rem;">+ 新增行李項目</button>
+        <div class="checklist-cat-content">
+          <div class="checklist-items-list">${itemsHtml}</div>
+          <div style="margin-top: 8px; text-align: center;">
+            <button class="add-row-btn" onclick="addChecklistItem(this)" style="padding: 4px; font-size: 0.8rem;">+ 新增行李項目</button>
+          </div>
         </div>
       `;
       checklistContainer.appendChild(catDiv);
@@ -1235,6 +1272,7 @@
     if (!tripData.checklist) tripData.checklist = {};
     tripData.checklist[newCKey] = {
       title: "新行李分類",
+      expanded: true, // 新增時預設展開
       items: {
         item1: { text: "新項目", checked: false }
       }
