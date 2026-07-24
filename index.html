@@ -131,8 +131,8 @@
       flex-wrap: wrap;
     }
 
-    /* 航班資訊面板樣式 */
-    .flight-panel {
+    /* 通用面板樣式 (航班與行李清單) */
+    .flight-panel, .checklist-panel {
       background: #ffffff;
       border: 1px solid var(--border-color);
       border-radius: 14px;
@@ -141,7 +141,7 @@
       box-shadow: var(--card-shadow);
     }
 
-    .flight-panel-title {
+    .flight-panel-title, .checklist-panel-title {
       font-size: 1rem;
       font-weight: bold;
       color: #9c4d63;
@@ -277,22 +277,6 @@
       opacity: 1;
       background: var(--danger-color);
       transform: scale(1.1);
-    }
-
-    /* 三線拖曳按鈕樣式 */
-    .drag-handle {
-      cursor: grab;
-      color: #b07d89;
-      background: #f0e1e5;
-      border: none;
-      border-radius: 4px;
-      padding: 3px 6px;
-      font-size: 0.9rem;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      user-select: none;
-      letter-spacing: -2px;
     }
 
     /* PART 區塊樣式 */
@@ -584,6 +568,62 @@
       color: var(--accent-pink);
     }
 
+    /* 行李清單專屬樣式 */
+    .checklist-category-card {
+      background: #faf5f6;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .checklist-cat-header {
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: #9c4d63;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      border-bottom: 1px dashed #ffdbe3;
+      padding-bottom: 4px;
+    }
+    .checklist-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .checklist-item-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #ffffff;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+    .checklist-item-row.checked span {
+      text-decoration: line-through;
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+    .checklist-item-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent-pink);
+      cursor: pointer;
+    }
+    .checklist-item-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 0.85rem;
+      color: var(--text-color);
+    }
+    .checklist-item-input:focus {
+      background: #faf5f6;
+      border-radius: 4px;
+    }
+
     .global-actions {
       text-align: center;
       margin: 20px 0;
@@ -662,9 +702,23 @@
   <!-- 行程容器 -->
   <div id="itinerary-container"></div>
 
-  <!-- 全域新增按鈕 -->
+  <!-- 全域新增行程按鈕 -->
   <div class="global-actions">
     <button class="btn-primary add-part-btn" onclick="addPart()" style="padding: 8px 16px; border-radius: 8px; width: auto; font-size: 0.85rem;">➕ 新增區塊 (PART)</button>
+  </div>
+
+  <!-- 行李檢核清單面板 (Checklist) -->
+  <div class="checklist-panel">
+    <div class="checklist-panel-title" onclick="toggleChecklistPanel()">
+      <span>🧳 行李檢核清單 (Checklist)</span>
+      <span id="checklist-toggle-arrow" style="font-size: 0.8rem; color: #b07d89;">▾</span>
+    </div>
+    <div id="checklist-content-container" style="display: none;">
+      <div id="checklist-categories-container"></div>
+      <div style="margin-top: 10px; text-align: center;">
+        <button class="add-row-btn" onclick="addChecklistCategory()">+ 新增行李分類</button>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -687,6 +741,24 @@
               item1: { type: "交通", detail: "機場快線車票", jpy: 1150, twd: 253, note: "https://maps.app.goo.gl/example" }
             }
           }
+        }
+      }
+    },
+    checklist: {
+      cat1: {
+        title: "重要證件與金錢",
+        items: {
+          item1: { text: "護照 (效期6個月以上)", checked: true },
+          item2: { text: "日幣現金 / 信用卡 / Suica卡", checked: false },
+          item3: { text: "機票與住宿預訂憑證", checked: false }
+        }
+      },
+      cat2: {
+        title: "電子與3C用品",
+        items: {
+          item1: { text: "手機與充電線", checked: false },
+          item2: { text: "行動電源 (需放隨身行李)", checked: false },
+          item3: { text: "日本網卡 / eSIM", checked: false }
         }
       }
     }
@@ -712,6 +784,18 @@
       arrow.style.transform = 'rotate(180deg)';
     } else {
       grid.style.display = 'none';
+      arrow.style.transform = 'rotate(0deg)';
+    }
+  }
+
+  function toggleChecklistPanel() {
+    const container = document.getElementById('checklist-content-container');
+    const arrow = document.getElementById('checklist-toggle-arrow');
+    if (container.style.display === 'none') {
+      container.style.display = 'block';
+      arrow.style.transform = 'rotate(180deg)';
+    } else {
+      container.style.display = 'none';
       arrow.style.transform = 'rotate(0deg)';
     }
   }
@@ -846,6 +930,15 @@
     card.querySelector('.item-summary-amount').innerText = 'NT$ ' + Number(twd).toLocaleString('zh-TW');
   }
 
+  function toggleChecklistRow(checkbox) {
+    const row = checkbox.closest('.checklist-item-row');
+    if (checkbox.checked) {
+      row.classList.add('checked');
+    } else {
+      row.classList.remove('checked');
+    }
+  }
+
   function collectDataFromDOM() {
     const newData = {
       rate: document.getElementById('global-rate').value,
@@ -857,9 +950,11 @@
         inTime: document.getElementById('flight-in-time').value,
         inNo: document.getElementById('flight-in-no').value
       },
-      parts: {}
+      parts: {},
+      checklist: {}
     };
 
+    // 收集行程
     document.querySelectorAll('.part-section').forEach((partEl, pIdx) => {
       const partKey = `part${pIdx + 1}`;
       const partTitle = partEl.querySelector('.part-title-input').value;
@@ -885,6 +980,20 @@
       });
     });
 
+    // 收集行李清單
+    document.querySelectorAll('.checklist-category-card').forEach((catEl, cIdx) => {
+      const catKey = `cat${cIdx + 1}`;
+      const catTitle = catEl.querySelector('.checklist-cat-title').value;
+      newData.checklist[catKey] = { title: catTitle, items: {} };
+
+      catEl.querySelectorAll('.checklist-item-row').forEach((itemEl, iIdx) => {
+        const itemKey = `item${iIdx + 1}`;
+        const text = itemEl.querySelector('.checklist-item-input').value;
+        const checked = itemEl.querySelector('input[type="checkbox"]').checked;
+        newData.checklist[catKey].items[itemKey] = { text, checked };
+      });
+    });
+
     return newData;
   }
 
@@ -901,6 +1010,7 @@
       document.getElementById('flight-in-no').value = data.flight.inNo || '';
     }
 
+    // 渲染行程
     const container = document.getElementById('itinerary-container');
     container.innerHTML = '';
 
@@ -996,7 +1106,85 @@
       container.appendChild(partDiv);
     });
 
+    // 渲染行李清單
+    const checklistContainer = document.getElementById('checklist-categories-container');
+    checklistContainer.innerHTML = '';
+    const checklist = data.checklist || {};
+
+    Object.keys(checklist).forEach(catKey => {
+      const cat = checklist[catKey];
+      let itemsHtml = '';
+      const items = cat.items || {};
+
+      Object.keys(items).forEach(itemKey => {
+        const item = items[itemKey];
+        const isCheckedClass = item.checked ? 'checked' : '';
+        const isCheckedAttr = item.checked ? 'checked' : '';
+
+        itemsHtml += `
+          <div class="checklist-item-row ${isCheckedClass}">
+            <input type="checkbox" ${isCheckedAttr} onchange="toggleChecklistRow(this)">
+            <input type="text" class="checklist-item-input" value="${item.text || ''}" placeholder="行李項目名稱">
+            <button class="btn-danger" onclick="deleteChecklistItem(this)" style="padding: 2px 6px; font-size: 0.7rem;">×</button>
+          </div>
+        `;
+      });
+
+      const catDiv = document.createElement('div');
+      catDiv.className = 'checklist-category-card';
+      catDiv.innerHTML = `
+        <div class="checklist-cat-header">
+          <div class="clearable-input-wrapper" style="max-width: 65%;">
+            <input type="text" class="cell-input checklist-cat-title" value="${cat.title || '行李分類'}" placeholder="分類名稱">
+            <button class="clear-btn" onclick="clearInput(this)">×</button>
+          </div>
+          <button class="btn-danger" onclick="deleteChecklistCategory(this)">刪除分類</button>
+        </div>
+        <div class="checklist-items-list">${itemsHtml}</div>
+        <div style="margin-top: 6px; text-align: center;">
+          <button class="add-row-btn" onclick="addChecklistItem(this)" style="padding: 4px; font-size: 0.8rem;">+ 新增行李項目</button>
+        </div>
+      `;
+      checklistContainer.appendChild(catDiv);
+    });
+
     updateGrandTotal();
+  }
+
+  function addChecklistItem(btn) {
+    const listContainer = btn.closest('.checklist-category-card').querySelector('.checklist-items-list');
+    const row = document.createElement('div');
+    row.className = 'checklist-item-row';
+    row.innerHTML = `
+      <input type="checkbox" onchange="toggleChecklistRow(this)">
+      <input type="text" class="checklist-item-input" value="新行李項目" placeholder="行李項目名稱">
+      <button class="btn-danger" onclick="deleteChecklistItem(this)" style="padding: 2px 6px; font-size: 0.7rem;">×</button>
+    `;
+    listContainer.appendChild(row);
+  }
+
+  function deleteChecklistItem(btn) {
+    btn.closest('.checklist-item-row').remove();
+  }
+
+  function addChecklistCategory() {
+    tripData = collectDataFromDOM();
+    const cKeys = Object.keys(tripData.checklist || {});
+    const newCKey = `cat${cKeys.length + 1}`;
+    if (!tripData.checklist) tripData.checklist = {};
+    tripData.checklist[newCKey] = {
+      title: "新行李分類",
+      items: {
+        item1: { text: "新項目", checked: false }
+      }
+    };
+    renderUI(tripData);
+  }
+
+  function deleteChecklistCategory(btn) {
+    if (confirm('確定要刪除這個行李分類嗎？')) {
+      btn.closest('.checklist-category-card').remove();
+    }
   }
 
   function updateNotePreview(textarea) {
@@ -1252,7 +1440,7 @@
     const currentStructuredData = collectDataFromDOM();
     try {
       await set(ref(db, "japan_travel"), currentStructuredData);
-      alert("✅ 行程資料已成功同步至雲端！");
+      alert("✅ 行程與行李清單已成功同步至雲端！");
     } catch (err) {
       console.error(err);
       alert("❌ 同步失敗：" + err.message);
