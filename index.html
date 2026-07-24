@@ -226,8 +226,8 @@
       background: #fff0f1; 
       color: var(--danger-color); 
       border: 1px solid #ffd1d5; 
-      padding: 3px 8px;
-      font-size: 0.75rem;
+      padding: 5px 10px;
+      font-size: 0.8rem;
       border-radius: 6px;
     }
     .btn-danger:hover { background: var(--danger-color); color: white; }
@@ -571,12 +571,12 @@
       color: var(--accent-pink);
     }
 
-    /* 行李清單專屬樣式 (可摺疊分類卡片) */
+    /* 行李清單專屬樣式 (可摺疊分類卡片) - 手機版優化空間與按鈕大小 */
     .checklist-category-card {
       background: #faf5f6;
       border: 1px solid var(--border-color);
       border-radius: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       overflow: hidden;
       transition: all 0.2s;
     }
@@ -584,10 +584,10 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 12px;
+      padding: 6px 10px;
       background: linear-gradient(to right, #ffeef2, #faf5f6);
       cursor: pointer;
-      gap: 8px;
+      gap: 6px;
       user-select: none;
       border-bottom: 1px dashed #ffdbe3;
     }
@@ -601,13 +601,14 @@
       background: transparent;
       border: 1px solid transparent;
       flex: 1;
+      padding: 4px;
     }
     .checklist-cat-title-input:focus {
       background: white;
       border-color: var(--accent-pink);
     }
     .checklist-cat-content {
-      padding: 10px;
+      padding: 8px 10px;
       display: none; /* 預設收合 */
     }
     .checklist-category-card.expanded .checklist-cat-content {
@@ -617,17 +618,53 @@
       transform: rotate(180deg);
     }
 
+    /* 按鈕大小與佈局調整：刪除分類改小且簡潔，展開箭頭按鈕放大 */
+    .checklist-cat-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-delete-cat {
+      background: #fff0f1;
+      color: var(--danger-color);
+      border: 1px solid #ffd1d5;
+      padding: 3px 6px;
+      font-size: 0.7rem;
+      border-radius: 5px;
+      white-space: nowrap;
+    }
+    .btn-delete-cat:hover {
+      background: var(--danger-color);
+      color: white;
+    }
+    .expand-arrow-btn {
+      background: #fff0f3;
+      color: #e65c7b;
+      border: 1px solid #ffd1d5;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .expand-arrow-btn:hover {
+      background: #ffe0e6;
+    }
+
     .checklist-items-list {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
     .checklist-item-row {
       display: flex;
       align-items: center;
       gap: 8px;
       background: #ffffff;
-      padding: 6px 10px;
+      padding: 4px 8px;
       border-radius: 8px;
       border: 1px solid var(--border-color);
     }
@@ -648,6 +685,7 @@
       background: transparent;
       font-size: 0.85rem;
       color: var(--text-color);
+      padding: 4px;
     }
     .checklist-item-input:focus {
       background: #faf5f6;
@@ -700,6 +738,8 @@
       .flight-grid { grid-template-columns: 1fr; }
       .flight-inputs { grid-template-columns: 1fr; gap: 6px; }
       .detail-grid-row { grid-template-columns: 1fr; }
+      .checklist-panel { padding: 8px 10px; }
+      .checklist-category-card { margin-bottom: 6px; }
     }
   </style>
 </head>
@@ -1227,18 +1267,20 @@
       catDiv.className = `checklist-category-card ${expandedClass}`;
       catDiv.innerHTML = `
         <div class="checklist-cat-header-bar" onclick="toggleChecklistCategoryCard(this)">
-          <div class="clearable-input-wrapper" style="max-width: 65%;" onclick="event.stopPropagation()">
+          <div class="clearable-input-wrapper" style="max-width: 58%;" onclick="event.stopPropagation()">
             <input type="text" class="cell-input checklist-cat-title-input" value="${cat.title || '行李分類'}" placeholder="分類名稱">
             <button class="clear-btn" onclick="clearInput(this)">×</button>
           </div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <button class="btn-danger" onclick="event.stopPropagation(); deleteChecklistCategory(this)">刪除分類</button>
-            <span class="expand-arrow">▼</span>
+          <div class="checklist-cat-right">
+            <button class="btn-delete-cat" onclick="event.stopPropagation(); deleteChecklistCategory(this)">刪除</button>
+            <div class="expand-arrow-btn">
+              <span class="expand-arrow">▼</span>
+            </div>
           </div>
         </div>
         <div class="checklist-cat-content">
           <div class="checklist-items-list">${itemsHtml}</div>
-          <div style="margin-top: 8px; text-align: center;">
+          <div style="margin-top: 6px; text-align: center;">
             <button class="add-row-btn" onclick="addChecklistItem(this)" style="padding: 4px; font-size: 0.8rem;">+ 新增行李項目</button>
           </div>
         </div>
