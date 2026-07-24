@@ -7,166 +7,286 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇯🇵</text></svg>">
   
   <style>
+    /* ================= 櫻花粉白系質感與風格設定 ================= */
     :root {
-      --primary-color: #2563eb;
-      --primary-hover: #1d4ed8;
-      --danger-color: #ef4444;
-      --danger-hover: #dc2626;
-      --bg-color: #f8fafc;
+      --bg-color: #fcf6f7;
       --card-bg: #ffffff;
-      --border-color: #e2e8f0;
-      --text-color: #334155;
-      --text-muted: #64748b;
+      --text-color: #4a4044;
+      --text-muted: #8c7d82;
+      --border-color: #f0d5dc;
+      --accent-pink: #ff758c;
+      --accent-pink-hover: #ff5270;
+      --accent-purple: #8b5cf6;
+      --accent-green: #2ecc71;
+      --danger-color: #ff6b6b;
+      --glow-shadow: 0 8px 25px rgba(255, 117, 140, 0.12);
+      --card-shadow: 0 4px 15px rgba(220, 195, 202, 0.2);
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-color);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       margin: 0;
-      padding: 12px;
+      padding: 10px;
       line-height: 1.5;
     }
 
     .container {
-      max-width: 800px;
+      max-width: 1000px;
       margin: 0 auto;
+      padding: 5px;
     }
 
-    /* 頂部區域 */
-    .header-card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    /* 頂部控制面板 (固定置頂) - 手機版高度精簡 */
+    .top-panel {
+      position: sticky;
+      top: 5px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border: 1px solid var(--border-color);
-    }
-
-    .top-bar {
+      border-radius: 14px;
+      padding: 10px 15px;
+      margin-bottom: 15px;
       display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 12px;
+      box-shadow: 0 4px 20px rgba(255, 117, 140, 0.15);
     }
 
-    .grand-total-box {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--primary-color);
-    }
-
-    .action-btns {
+    .budget-summary-container {
       display: flex;
-      gap: 8px;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-width: 200px;
     }
 
-    .btn-primary {
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 8px;
+    .budget-summary-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .budget-summary {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #e65c7b;
+      letter-spacing: 0.5px;
+    }
+
+    .toggle-details-btn {
+      background: #fff0f3;
+      color: #e65c7b;
+      border: 1px solid #ffd1d5;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
       cursor: pointer;
       font-weight: 600;
-      transition: background-color 0.2s;
     }
-    .btn-primary:hover { background-color: var(--primary-hover); }
-
-    .btn-danger {
-      background-color: var(--danger-color);
-      color: white;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.8rem;
-    }
-    .btn-danger:hover { background-color: var(--danger-hover); }
-
-    .rate-setting {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.9rem;
-      background: #f1f5f9;
-      padding: 8px 12px;
-      border-radius: 8px;
+    .toggle-details-btn:hover {
+      background: #ffe0e6;
     }
 
-    .rate-input {
-      width: 70px;
-      padding: 4px 8px;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      text-align: center;
-    }
-
-    /* 分類支出統計折疊 */
+    /* 動態分類統計小標籤列 (預設隱藏，點擊才展開) */
     .category-breakdown {
       display: none;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px dashed var(--border-color);
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 8px;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 4px;
+      padding-top: 6px;
+      border-top: 1px dashed #f0d5dc;
     }
-    .category-breakdown.show { display: grid; }
+    .category-breakdown.show {
+      display: flex;
+    }
 
     .cat-badge {
-      background: #f1f5f9;
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      display: flex;
-      justify-content: space-between;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #fff0f3;
+      color: #9c4d63;
+      border: 1px solid #ffd1d5;
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-size: 0.75rem;
+      font-weight: 600;
     }
 
-    /* 共通面板卡片 */
-    .panel-card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    .cat-badge span {
+      color: #e65c7b;
+    }
+
+    .control-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* 通用面板樣式 (航班與行李清單) */
+    .flight-panel, .checklist-panel {
+      background: #ffffff;
       border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 12px 15px;
+      margin-bottom: 15px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .flight-panel-title, .checklist-panel-title {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #9c4d63;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #ffdbe3;
+      padding-bottom: 6px;
+      cursor: pointer;
     }
 
     .flight-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 12px;
+      gap: 10px;
     }
 
-    @media (max-width: 600px) {
-      .flight-grid { grid-template-columns: 1fr; }
-    }
-
-    .flight-box {
-      background: #f8fafc;
+    .flight-card {
+      background: #faf5f6;
+      border: 1px solid #f0d5dc;
+      border-radius: 10px;
       padding: 10px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-    }
-
-    .flight-box h4 {
-      margin: 0 0 8px 0;
-      font-size: 0.9rem;
-      color: var(--primary-color);
-    }
-
-    .flight-inputs {
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
 
-    /* 行程 PART & DAY */
+    .flight-card-header {
+      font-weight: bold;
+      font-size: 0.85rem;
+      color: #b07d89;
+    }
+
+    .flight-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 5px;
+    }
+
+    input, button, select, textarea {
+      background: #faf5f6;
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent-pink);
+      box-shadow: 0 0 6px rgba(255, 117, 140, 0.3);
+    }
+
+    input[type="number"] {
+      width: 75px;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary { 
+      background: linear-gradient(135deg, #ff758c, #ff7eb3); 
+      color: white; 
+      border: none; 
+      box-shadow: 0 3px 8px rgba(255, 117, 140, 0.3);
+    }
+    .btn-primary:hover { background: linear-gradient(135deg, #ff5270, #ff639c); }
+
+    .btn-danger { 
+      background: #fff0f1; 
+      color: var(--danger-color); 
+      border: 1px solid #ffd1d5; 
+      padding: 3px 8px;
+      font-size: 0.75rem;
+      border-radius: 6px;
+    }
+    .btn-danger:hover { background: var(--danger-color); color: white; }
+
+    .btn-success { 
+      background: linear-gradient(135deg, #2ecc71, #27ae60); 
+      color: white; 
+      border: none; 
+      box-shadow: 0 3px 8px rgba(46, 204, 113, 0.3);
+    }
+    .btn-success:hover { background: linear-gradient(135deg, #27ae60, #1e8449); }
+
+    /* 內建清除按鈕包裝容器 */
+    .clearable-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .clearable-input-wrapper input,
+    .clearable-input-wrapper textarea,
+    .clearable-input-wrapper select {
+      width: 100%;
+      padding-right: 24px;
+    }
+
+    .clear-btn {
+      position: absolute;
+      right: 6px;
+      background: #e2d1d6;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: all 0.2s;
+      padding: 0;
+      line-height: 1;
+      z-index: 10;
+    }
+
+    .clear-btn:hover {
+      opacity: 1;
+      background: var(--danger-color);
+      transform: scale(1.1);
+    }
+
+    /* PART 區塊樣式 */
     .part-section {
-      margin-bottom: 24px;
+      background: #ffffff;
+      border: 2px dashed #f0d5dc;
+      border-radius: 14px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: var(--card-shadow);
     }
 
     .part-header {
@@ -174,84 +294,124 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
-      background: #e2e8f0;
-      padding: 8px 12px;
-      border-radius: 8px;
+      border-bottom: 2px solid #ffdbe3;
+      padding-bottom: 10px;
+      gap: 10px;
     }
 
     .part-title-input {
-      font-weight: 700;
-      font-size: 1.05rem;
-      border: none;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #9c4d63;
+      border: 1px solid transparent;
       background: transparent;
       width: 60%;
     }
+    .part-title-input:focus {
+      background: #faf5f6;
+      border-color: var(--accent-pink);
+    }
 
+    .part-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    /* Day 卡片樣式 */
     .day-card {
-      background: var(--card-bg);
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 12px;
+      background: #faf5f6;
       border: 1px solid var(--border-color);
+      border-radius: 10px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(220, 195, 202, 0.1);
     }
 
     .day-header {
+      background: linear-gradient(to right, #ffeef2, #faf5f6);
+      padding: 10px 12px;
+      font-weight: bold;
       display: flex;
-      gap: 8px;
+      justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      border-left: 5px solid var(--accent-pink);
+      border-bottom: 1px solid var(--border-color);
+      gap: 8px;
       flex-wrap: wrap;
     }
 
     .day-input {
-      font-weight: 600;
-      width: 120px;
+      background: transparent;
+      border: 1px solid transparent;
+      font-weight: bold;
+      color: var(--text-color);
+      font-size: 0.95rem;
+      flex: 1;
+      min-width: 150px;
+    }
+    .day-input:focus {
+      background: white;
+      border-color: var(--accent-pink);
     }
 
     .base-input {
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      flex: 1;
+      background: #ffffff;
+      border: 1px solid #ffdbe3;
+      font-size: 0.8rem;
+      color: #9c6c77;
+      padding: 3px 6px;
+      border-radius: 5px;
+      width: 130px;
     }
 
-    /* 細項卡片 */
+    /* 摺疊項目卡片設計 (Popup / Accordion 風格) */
     .item-card {
-      background: #f8fafc;
+      background: #ffffff;
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      margin-bottom: 8px;
+      margin: 8px;
       overflow: hidden;
+      transition: all 0.2s;
     }
 
     .item-summary-bar {
-      padding: 10px 12px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      cursor: pointer;
+      justify-content: space-between;
+      padding: 8px 12px;
       background: #ffffff;
+      cursor: pointer;
+      gap: 8px;
+      user-select: none;
+    }
+    .item-summary-bar:hover {
+      background: #fff8f9;
     }
 
     .item-summary-left {
       display: flex;
       align-items: center;
       gap: 8px;
+      flex: 1;
       overflow: hidden;
     }
 
     .item-badge-tag {
-      background: #e0e7ff;
-      color: #3730a3;
-      font-size: 0.75rem;
+      background: #fff0f3;
+      color: #e65c7b;
+      border: 1px solid #ffd1d5;
       padding: 2px 6px;
       border-radius: 4px;
-      white-space: nowrap;
+      font-size: 0.75rem;
       font-weight: 600;
+      white-space: nowrap;
     }
 
     .item-summary-title {
-      font-weight: 600;
       font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-color);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -261,115 +421,72 @@
       display: flex;
       align-items: center;
       gap: 8px;
-    }
-
-    .item-summary-amount {
-      font-weight: 700;
-      font-size: 0.9rem;
-      color: var(--primary-color);
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #e0566d;
+      white-space: nowrap;
     }
 
     .expand-arrow {
-      font-size: 0.75rem;
+      color: #b07d89;
+      font-size: 0.8rem;
       transition: transform 0.2s;
     }
 
+    /* 展開後的詳細編輯內容區塊 */
+    .item-details-content {
+      display: none;
+      padding: 10px 12px;
+      background: #faf5f6;
+      border-top: 1px solid var(--border-color);
+      flex-direction: column;
+      gap: 8px;
+    }
+    .item-card.expanded .item-details-content {
+      display: flex;
+    }
     .item-card.expanded .expand-arrow {
       transform: rotate(180deg);
     }
 
-    .item-details-content {
-      display: none;
-      padding: 12px;
-      border-top: 1px solid var(--border-color);
-      background: #f8fafc;
-      gap: 10px;
-      flex-direction: column;
-    }
-
-    .item-card.expanded .item-details-content {
-      display: flex;
-    }
-
     .detail-grid-row {
       display: grid;
-      grid-template-columns: 120px 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
 
-    .cost-box {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .cost-input {
-      width: 100px;
-      padding: 4px 8px;
+    .cell-input {
+      background: #ffffff;
       border: 1px solid var(--border-color);
-      border-radius: 6px;
-    }
-
-    .input-group {
-      display: flex;
-      align-items: center;
-      background: white;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding-left: 6px;
-    }
-
-    .input-group input {
-      border: none;
-      width: 90px;
-      padding: 4px 6px;
-      outline: none;
-    }
-
-    .curr-tag {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    /* 一鍵清除按鈕包裹 */
-    .clearable-input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
       width: 100%;
-    }
-
-    .clearable-input-wrapper input,
-    .clearable-input-wrapper textarea {
-      width: 100%;
-      padding-right: 24px;
-      box-sizing: border-box;
-      border: 1px solid var(--border-color);
+      padding: 6px;
       border-radius: 6px;
-      padding-top: 4px;
-      padding-bottom: 4px;
-      padding-left: 8px;
+      color: var(--text-color);
+      font-size: 0.85rem;
+    }
+    .cell-input:focus {
+      border-color: var(--accent-pink);
     }
 
-    .clear-btn {
-      position: absolute;
-      right: 6px;
-      background: transparent;
-      border: none;
-      color: #94a3b8;
-      cursor: pointer;
-      font-size: 1rem;
-      padding: 0 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    select.cell-input {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c7d82' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 6px center;
+      background-size: 12px;
+      padding-right: 20px;
     }
-    .clear-btn:hover { color: #475569; }
 
+    /* 備註與超連結包裝區塊 */
     .note-container {
       display: flex;
       flex-direction: column;
+      gap: 5px;
+    }
+
+    .note-preview-area {
+      display: flex;
+      flex-wrap: wrap;
       gap: 4px;
     }
 
@@ -377,212 +494,229 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      background: #eff6ff;
-      color: #1d4ed8;
-      border: 1px solid #bfdbfe;
-      padding: 2px 8px;
-      border-radius: 12px;
+      background: #fff0f3;
+      color: #e65c7b;
+      border: 1px solid #ffd1d5;
+      padding: 2px 6px;
+      border-radius: 5px;
       font-size: 0.75rem;
       text-decoration: none;
-      margin-right: 4px;
-      margin-top: 4px;
+      font-weight: 600;
+      width: fit-content;
+    }
+    .link-badge:hover {
+      background: #ffe0e6;
     }
 
-    .add-row-btn {
+    /* 費用輸入群組 */
+    .cost-box {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .curr-tag {
+      padding: 3px 5px;
+      font-size: 0.75rem;
+      background: #f0e1e5;
+      color: #7a686e;
+    }
+
+    .cost-input {
+      border: none;
+      background: transparent;
+      padding: 4px;
+      width: 65px;
+      color: var(--text-color);
+      font-size: 0.85rem;
+    }
+
+    .twd-val {
+      color: #e0566d;
+      font-weight: bold;
+    }
+
+    .add-row-container {
+      padding: 8px;
+      text-align: center;
+      background: #ffffff;
+    }
+
+    .add-row-btn, .add-day-btn, .add-part-btn {
+      background: #faf5f6;
+      border: 1px dashed #e6b8c3;
+      color: #b07d89;
       width: 100%;
       padding: 6px;
-      background: #f1f5f9;
-      border: 1px dashed var(--border-color);
-      border-radius: 6px;
-      color: var(--text-muted);
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 0.85rem;
-    }
-    .add-row-btn:hover { background: #e2e8f0; }
-
-    /* 行李準備清單分頁 Tabs 樣式 */
-    .checklist-tabs-container {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 8px;
-      margin-bottom: 12px;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .checklist-tab-btn {
-      padding: 6px 14px;
-      font-size: 0.85rem;
       font-weight: 600;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      background-color: var(--card-bg);
-      color: var(--text-color);
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
+      font-size: 0.85rem;
+    }
+    .add-row-btn:hover, .add-day-btn:hover, .add-part-btn:hover {
+      background: #fff0f3;
+      border-color: var(--accent-pink);
+      color: var(--accent-pink);
     }
 
-    .checklist-tab-btn.active {
-      background-color: var(--primary-color);
-      color: #ffffff;
-      border-color: var(--primary-color);
-    }
-
-    .checklist-tab-panel {
-      display: none;
-    }
-
-    .checklist-tab-panel.active {
-      display: block;
-    }
-
+    /* 行李清單專屬樣式 */
     .checklist-category-card {
-      background: #f8fafc;
+      background: #faf5f6;
       border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 12px;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
     }
-
     .checklist-cat-header {
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: #9c4d63;
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 8px;
+      border-bottom: 1px dashed #ffdbe3;
+      padding-bottom: 4px;
     }
-
+    .checklist-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
     .checklist-item-row {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 6px;
+      background: #ffffff;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
     }
-
-    .checklist-item-row.checked input[type="text"] {
+    .checklist-item-row.checked span {
       text-decoration: line-through;
       color: var(--text-muted);
+      opacity: 0.7;
     }
-
+    .checklist-item-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent-pink);
+      cursor: pointer;
+    }
     .checklist-item-input {
       flex: 1;
-      border: 1px solid var(--border-color);
+      border: none;
+      background: transparent;
+      font-size: 0.85rem;
+      color: var(--text-color);
+    }
+    .checklist-item-input:focus {
+      background: #faf5f6;
       border-radius: 4px;
-      padding: 4px 8px;
     }
 
-    select.cell-input {
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 4px;
-      background: white;
+    .global-actions {
+      text-align: center;
+      margin: 20px 0;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* 響應式手機優化調整 */
+    @media (max-width: 768px) {
+      .top-panel { padding: 10px 12px; }
+      .flight-grid { grid-template-columns: 1fr; }
+      .flight-inputs { grid-template-columns: 1fr; gap: 6px; }
+      .detail-grid-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  
-  <!-- 頂部資訊與控制區域 -->
-  <div class="header-card">
-    <div class="top-bar">
-      <div>
-        <h2 style="margin:0 0 4px 0;">🇯🇵 日本旅遊行程與預算</h2>
-        <div class="grand-total-box">
-          總預算：<span id="grand-total-twd">NT$ 0</span>
+
+  <!-- 頂部控制面板 -->
+  <div class="top-panel">
+    <div class="budget-summary-container">
+      <div class="budget-summary-row">
+        <div class="budget-summary">
+          🌸 總預算：<span id="grand-total-twd">NT$ 0</span>
         </div>
+        <button class="toggle-details-btn" onclick="toggleCategoryBreakdown()">分類明細 ▾</button>
       </div>
-      <div class="action-btns">
-        <button class="btn-primary" onclick="saveDataToFirebase()">☁️ 同步至雲端</button>
-        <button class="btn-primary" style="background:#475569" onclick="resetData()">🔄 重整</button>
-      </div>
+      <!-- 點擊才展開的動態分類明細 -->
+      <div id="category-breakdown" class="category-breakdown"></div>
     </div>
-
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-      <div class="rate-setting">
-        <span>💱 預設日幣匯率：</span>
-        <input type="number" id="global-rate" class="rate-input" value="0.22" step="0.001" onchange="recalculateAll()">
-        <button class="btn-primary" style="padding: 4px 8px; font-size: 0.8rem;" onclick="recalculateAll()">套用</button>
+    <div class="control-group">
+      <label style="font-size: 0.85rem; font-weight: 600;">匯率:</label>
+      <div class="clearable-input-wrapper" style="width: 80px;">
+        <input type="number" id="global-rate" value="0.22" step="0.01" oninput="recalculateAll()">
+        <button class="clear-btn" onclick="clearInput(this)">×</button>
       </div>
-      
-      <div style="display: flex; gap: 6px;">
-        <button onclick="toggleCategoryBreakdown()" style="background:none; border:1px solid var(--border-color); border-radius:6px; padding:4px 8px; cursor:pointer; font-size:0.8rem;">📊 支出分類統計</button>
-        <button onclick="toggleAllItems(true)" style="background:none; border:1px solid var(--border-color); border-radius:6px; padding:4px 8px; cursor:pointer; font-size:0.8rem;">展開全部</button>
-        <button onclick="toggleAllItems(false)" style="background:none; border:1px solid var(--border-color); border-radius:6px; padding:4px 8px; cursor:pointer; font-size:0.8rem;">收合全部</button>
-      </div>
+      <button class="btn-primary" onclick="toggleAllItems(true)" style="padding: 6px 10px; font-size: 0.8rem;" title="一鍵全開">全開</button>
+      <button class="btn-primary" onclick="toggleAllItems(false)" style="padding: 6px 10px; font-size: 0.8rem;" title="一鍵全收">全收</button>
+      <button class="btn-success" onclick="saveDataToFirebase()" style="padding: 6px 10px; font-size: 0.8rem;">☁️ 同步</button>
+      <button class="btn-danger" onclick="resetData()" style="padding: 6px 10px; font-size: 0.8rem;">重置</button>
     </div>
-
-    <!-- 分類支出小計折疊區域 -->
-    <div id="category-breakdown" class="category-breakdown"></div>
   </div>
 
-  <!-- 航班資訊專區 -->
-  <div class="panel-card">
-    <div class="panel-header" onclick="toggleFlightPanel()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-      <h3 style="margin: 0;">✈️ 航班資訊</h3>
-      <span id="flight-toggle-arrow" style="transition: transform 0.3s; transform: rotate(180deg);">▼</span>
+  <!-- 航班與出國資訊面板 (可點標題折疊) -->
+  <div class="flight-panel">
+    <div class="flight-panel-title" onclick="toggleFlightPanel()">
+      <span>✈️ 航班與出國資訊</span>
+      <span id="flight-toggle-arrow" style="font-size: 0.8rem; color: #b07d89;">▾</span>
     </div>
-    <div id="flight-content-grid" class="flight-grid">
-      <div class="flight-box">
-        <h4>🛫 去程 (Outbound)</h4>
+    <div id="flight-content-grid" class="flight-grid" style="display: none;">
+      <!-- 去程航班 -->
+      <div class="flight-card">
+        <div class="flight-card-header">🛫 去程航班</div>
         <div class="flight-inputs">
-          <div class="clearable-input-wrapper">
-            <input type="text" id="flight-out-date" placeholder="日期 (例: 10/12)" value="">
-            <button class="clear-btn" onclick="clearInput(this)">×</button>
-          </div>
-          <div class="clearable-input-wrapper">
-            <input type="text" id="flight-out-time" placeholder="時間 (例: 08:30 -> 12:45)" value="">
-            <button class="clear-btn" onclick="clearInput(this)">×</button>
-          </div>
-          <div class="clearable-input-wrapper">
-            <input type="text" id="flight-out-no" placeholder="航班號碼 (例: JAL123)" value="">
-            <button class="clear-btn" onclick="clearInput(this)">×</button>
-          </div>
+          <div class="clearable-input-wrapper"><input type="date" id="flight-out-date" placeholder="日期" /></div>
+          <div class="clearable-input-wrapper"><input type="time" id="flight-out-time" placeholder="時間" /></div>
+          <div class="clearable-input-wrapper"><input type="text" id="flight-out-no" placeholder="班機" /></div>
         </div>
       </div>
-      <div class="flight-box">
-        <h4>🛬 回程 (Inbound)</h4>
+      <!-- 回程航班 -->
+      <div class="flight-card">
+        <div class="flight-card-header">🛬 回程航班</div>
         <div class="flight-inputs">
-          <div class="clearable-input-wrapper">
-            <input type="text" id="flight-in-date" placeholder="日期 (例: 10/18)" value="">
-            <button class="clear-btn" onclick="clearInput(this)">×</button>
-          </div>
-          <div class="clearable-input-wrapper">
-            <input type="text" id="flight-in-time" placeholder="時間 (例: 18:00 -> 21:30)" value="">
-            <button class="clear-btn" onclick="clearInput(this)">×</button>
-          </div>
-          <div class="clearable-input-wrapper">
-            <input type="text" id="flight-in-no" placeholder="航班號碼 (例: JAL124)" value="">
-            <button class="clear-btn" onclick="clearInput(this)">×</button>
-          </div>
+          <div class="clearable-input-wrapper"><input type="date" id="flight-in-date" placeholder="日期" /></div>
+          <div class="clearable-input-wrapper"><input type="time" id="flight-in-time" placeholder="時間" /></div>
+          <div class="clearable-input-wrapper"><input type="text" id="flight-in-no" placeholder="班機" /></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 主行程容器 -->
+  <!-- 行程容器 -->
   <div id="itinerary-container"></div>
 
-  <div style="margin: 20px 0; text-align: center;">
-    <button class="btn-primary" onclick="addPart()" style="padding: 10px 20px; font-size: 1rem;">+ 新增行程區塊 (PART)</button>
+  <!-- 全域新增行程按鈕 -->
+  <div class="global-actions">
+    <button class="btn-primary add-part-btn" onclick="addPart()" style="padding: 8px 16px; border-radius: 8px; width: auto; font-size: 0.85rem;">➕ 新增區塊 (PART)</button>
   </div>
 
-  <!-- 行李準備清單專區 (已改為頂部分頁) -->
-  <div class="panel-card" style="margin-bottom: 20px;">
-    <div class="panel-header" onclick="toggleChecklistPanel()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-      <h3 style="margin: 0;">🧳 行李準備清單</h3>
-      <span id="checklist-toggle-arrow" style="transition: transform 0.3s; transform: rotate(180deg);">▼</span>
+  <!-- 行李檢核清單面板 (Checklist) -->
+  <div class="checklist-panel">
+    <div class="checklist-panel-title" onclick="toggleChecklistPanel()">
+      <span>🧳 行李檢核清單 (Checklist)</span>
+      <span id="checklist-toggle-arrow" style="font-size: 0.8rem; color: #b07d89;">▾</span>
     </div>
-    <div id="checklist-content-container" style="margin-top: 15px;">
-      
-      <!-- 頂部分類頁籤列 -->
-      <div id="checklist-tabs-bar" class="checklist-tabs-container"></div>
-
-      <!-- 頁籤對應的內容顯示區 -->
-      <div id="checklist-panels-container"></div>
-
-      <div style="margin-top: 15px; text-align: center;">
-        <button class="add-row-btn" onclick="addChecklistCategory()" style="padding: 8px 16px; font-size: 0.9rem;">+ 新增行李分類</button>
+    <div id="checklist-content-container" style="display: none;">
+      <div id="checklist-categories-container"></div>
+      <div style="margin-top: 10px; text-align: center;">
+        <button class="add-row-btn" onclick="addChecklistCategory()">+ 新增行李分類</button>
       </div>
     </div>
   </div>
@@ -592,13 +726,45 @@
 <script>
   let tripData = {
     rate: 0.22,
-    flight: {},
-    parts: {},
-    checklist: {}
+    flight: {
+      outDate: "12/01", outTime: "08:30", outNo: "JX820",
+      inDate: "12/05", inTime: "15:45", inNo: "JX821"
+    },
+    parts: {
+      part1: {
+        title: "PART 1：北海道極光與玩雪篇",
+        days: {
+          day1: {
+            title: "Day 1 抵達與市區漫步",
+            base: "札幌車站周邊",
+            items: {
+              item1: { type: "交通", detail: "機場快線車票", jpy: 1150, twd: 253, note: "https://maps.app.goo.gl/example" }
+            }
+          }
+        }
+      }
+    },
+    checklist: {
+      cat1: {
+        title: "重要證件與金錢",
+        items: {
+          item1: { text: "護照 (效期6個月以上)", checked: true },
+          item2: { text: "日幣現金 / 信用卡 / Suica卡", checked: false },
+          item3: { text: "機票與住宿預訂憑證", checked: false }
+        }
+      },
+      cat2: {
+        title: "電子與3C用品",
+        items: {
+          item1: { text: "手機與充電線", checked: false },
+          item2: { text: "行動電源 (需放隨身行李)", checked: false },
+          item3: { text: "日本網卡 / eSIM", checked: false }
+        }
+      }
+    }
   };
 
   const categories = ["固定", "交通", "住宿", "飲食", "遊玩", "購物"];
-  let activeChecklistTabIndex = 0;
 
   function getRate() {
     const val = parseFloat(document.getElementById('global-rate').value);
@@ -660,7 +826,7 @@
     } else {
       return `
         <div class="clearable-input-wrapper">
-          <input type="${type}" class="${className}" value="${value || ''}" placeholder="${placeholder}" oninput="updateItemSummary(this)">
+          <input type="${type}" class="${className}" value="${value !== undefined ? value : ''}" placeholder="${placeholder}" oninput="updateItemSummary(this)">
           <button class="clear-btn" onclick="clearInput(this)">×</button>
         </div>
       `;
@@ -737,12 +903,12 @@
       let btnText = '🔗 連結';
       if (url.includes('maps.app.goo.gl') || url.includes('google.com/maps')) {
         btnText = '🗺️ 地圖';
-      } else if (url.includes('agoda') || url.includes('booking') || url.includes('eztravel')) {
+      } else if (url.includes('agoda') || url.includes('booking')) {
         btnText = '🏨 訂房';
       } else if (url.includes('klook') || url.includes('kkday')) {
         btnText = '🎫 票券';
       }
-      html += `<a href="${url}" target="_blank" class="link-badge">${btnText}</a>`;
+      html += `<a href="${url}" target="_blank" rel="noopener noreferrer" class="link-badge">${btnText}</a>`;
     }
     return html;
   }
@@ -770,33 +936,6 @@
       row.classList.add('checked');
     } else {
       row.classList.remove('checked');
-    }
-  }
-
-  function switchChecklistTab(index) {
-    activeChecklistTabIndex = index;
-    
-    document.querySelectorAll('.checklist-tab-btn').forEach((btn, idx) => {
-      if (idx === index) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
-    });
-
-    document.querySelectorAll('.checklist-tab-panel').forEach((panel, idx) => {
-      if (idx === index) {
-        panel.classList.add('active');
-      } else {
-        panel.classList.remove('active');
-      }
-    });
-  }
-
-  function updateTabTitle(input, index) {
-    const tabs = document.querySelectorAll('.checklist-tab-btn');
-    if (tabs[index]) {
-      tabs[index].innerText = input.value || `分類 ${index + 1}`;
     }
   }
 
@@ -842,7 +981,7 @@
     });
 
     // 收集行李清單
-    document.querySelectorAll('.checklist-tab-panel').forEach((catEl, cIdx) => {
+    document.querySelectorAll('.checklist-category-card').forEach((catEl, cIdx) => {
       const catKey = `cat${cIdx + 1}`;
       const catTitle = catEl.querySelector('.checklist-cat-title').value;
       newData.checklist[catKey] = { title: catTitle, items: {} };
@@ -967,72 +1106,47 @@
       container.appendChild(partDiv);
     });
 
-    // 渲染行李清單 (頂部分頁切換)
-    const tabsContainer = document.getElementById('checklist-tabs-bar');
-    const panelsContainer = document.getElementById('checklist-panels-container');
-    tabsContainer.innerHTML = '';
-    panelsContainer.innerHTML = '';
-
+    // 渲染行李清單
+    const checklistContainer = document.getElementById('checklist-categories-container');
+    checklistContainer.innerHTML = '';
     const checklist = data.checklist || {};
-    const catKeys = Object.keys(checklist);
 
-    if (catKeys.length === 0) {
-      tabsContainer.innerHTML = '<span style="color:var(--text-muted); font-size:0.85rem;">尚無行李分類</span>';
-    } else {
-      if (activeChecklistTabIndex >= catKeys.length) {
-        activeChecklistTabIndex = 0;
-      }
+    Object.keys(checklist).forEach(catKey => {
+      const cat = checklist[catKey];
+      let itemsHtml = '';
+      const items = cat.items || {};
 
-      catKeys.forEach((catKey, index) => {
-        const cat = checklist[catKey];
-        const isTabActive = index === activeChecklistTabIndex ? 'active' : '';
+      Object.keys(items).forEach(itemKey => {
+        const item = items[itemKey];
+        const isCheckedClass = item.checked ? 'checked' : '';
+        const isCheckedAttr = item.checked ? 'checked' : '';
 
-        // 1. 渲染頂部 Tab 按鈕
-        const tabBtn = document.createElement('button');
-        tabBtn.className = `checklist-tab-btn ${isTabActive}`;
-        tabBtn.type = 'button';
-        tabBtn.innerText = cat.title || `分類 ${index + 1}`;
-        tabBtn.onclick = () => switchChecklistTab(index);
-        tabsContainer.appendChild(tabBtn);
-
-        // 2. 渲染對應的卡片面板
-        let itemsHtml = '';
-        const items = cat.items || {};
-
-        Object.keys(items).forEach(itemKey => {
-          const item = items[itemKey];
-          const isCheckedClass = item.checked ? 'checked' : '';
-          const isCheckedAttr = item.checked ? 'checked' : '';
-
-          itemsHtml += `
-            <div class="checklist-item-row ${isCheckedClass}">
-              <input type="checkbox" ${isCheckedAttr} onchange="toggleChecklistRow(this)">
-              <input type="text" class="checklist-item-input" value="${item.text || ''}" placeholder="行李項目名稱">
-              <button class="btn-danger" onclick="deleteChecklistItem(this)" style="padding: 2px 6px; font-size: 0.7rem;">×</button>
-            </div>
-          `;
-        });
-
-        const panelDiv = document.createElement('div');
-        panelDiv.className = `checklist-tab-panel ${isTabActive}`;
-        panelDiv.innerHTML = `
-          <div class="checklist-category-card">
-            <div class="checklist-cat-header">
-              <div class="clearable-input-wrapper" style="max-width: 65%;">
-                <input type="text" class="cell-input checklist-cat-title" value="${cat.title || '行李分類'}" placeholder="分類名稱" oninput="updateTabTitle(this, ${index})">
-                <button class="clear-btn" onclick="clearInput(this)">×</button>
-              </div>
-              <button class="btn-danger" onclick="deleteChecklistCategory(this)">刪除分類</button>
-            </div>
-            <div class="checklist-items-list">${itemsHtml}</div>
-            <div style="margin-top: 6px; text-align: center;">
-              <button class="add-row-btn" onclick="addChecklistItem(this)" style="padding: 4px; font-size: 0.8rem;">+ 新增行李項目</button>
-            </div>
+        itemsHtml += `
+          <div class="checklist-item-row ${isCheckedClass}">
+            <input type="checkbox" ${isCheckedAttr} onchange="toggleChecklistRow(this)">
+            <input type="text" class="checklist-item-input" value="${item.text || ''}" placeholder="行李項目名稱">
+            <button class="btn-danger" onclick="deleteChecklistItem(this)" style="padding: 2px 6px; font-size: 0.7rem;">×</button>
           </div>
         `;
-        panelsContainer.appendChild(panelDiv);
       });
-    }
+
+      const catDiv = document.createElement('div');
+      catDiv.className = 'checklist-category-card';
+      catDiv.innerHTML = `
+        <div class="checklist-cat-header">
+          <div class="clearable-input-wrapper" style="max-width: 65%;">
+            <input type="text" class="cell-input checklist-cat-title" value="${cat.title || '行李分類'}" placeholder="分類名稱">
+            <button class="clear-btn" onclick="clearInput(this)">×</button>
+          </div>
+          <button class="btn-danger" onclick="deleteChecklistCategory(this)">刪除分類</button>
+        </div>
+        <div class="checklist-items-list">${itemsHtml}</div>
+        <div style="margin-top: 6px; text-align: center;">
+          <button class="add-row-btn" onclick="addChecklistItem(this)" style="padding: 4px; font-size: 0.8rem;">+ 新增行李項目</button>
+        </div>
+      `;
+      checklistContainer.appendChild(catDiv);
+    });
 
     updateGrandTotal();
   }
@@ -1054,28 +1168,22 @@
   }
 
   function addChecklistCategory() {
-    const currentData = collectDataFromDOM();
-    const count = Object.keys(currentData.checklist || {}).length + 1;
-    const newCatKey = `cat${Date.now()}`;
-
-    if (!currentData.checklist) currentData.checklist = {};
-    currentData.checklist[newCatKey] = {
-      title: `新分類 ${count}`,
+    tripData = collectDataFromDOM();
+    const cKeys = Object.keys(tripData.checklist || {});
+    const newCKey = `cat${cKeys.length + 1}`;
+    if (!tripData.checklist) tripData.checklist = {};
+    tripData.checklist[newCKey] = {
+      title: "新行李分類",
       items: {
-        item1: { text: '', checked: false }
+        item1: { text: "新項目", checked: false }
       }
     };
-
-    activeChecklistTabIndex = Object.keys(currentData.checklist).length - 1;
-    renderUI(currentData);
+    renderUI(tripData);
   }
 
   function deleteChecklistCategory(btn) {
     if (confirm('確定要刪除這個行李分類嗎？')) {
-      btn.closest('.checklist-tab-panel').remove();
-      const currentData = collectDataFromDOM();
-      activeChecklistTabIndex = 0;
-      renderUI(currentData);
+      btn.closest('.checklist-category-card').remove();
     }
   }
 
@@ -1170,7 +1278,7 @@
   function addRow(btn) {
     const container = btn.closest('.day-card').querySelector('.day-items-container');
     const itemCard = document.createElement('div');
-    itemCard.className = 'item-card expanded';
+    itemCard.className = 'item-card expanded'; // 新增時預設展開方便直接編輯
     itemCard.innerHTML = `
       <div class="item-summary-bar" onclick="toggleItemCard(this)">
         <div class="item-summary-left">
@@ -1229,7 +1337,7 @@
     dayDiv.className = 'day-card';
     dayDiv.innerHTML = `
       <div class="day-header">
-        ${wrapClearable('text', 'day-input', '新的一天', 'Day 名稱')}
+        ${wrapClearable('text', 'day-input', 'Day X 新的一天', 'Day 名稱')}
         ${wrapClearable('text', 'base-input', '住宿地點', 'Base：住宿地點')}
         <button class="btn-danger" onclick="deleteDay(this)">刪除此日</button>
       </div>
@@ -1284,22 +1392,16 @@
   }
 
   function addPart() {
-    const container = document.getElementById('itinerary-container');
-    const count = container.querySelectorAll('.part-section').length + 1;
-    const partDiv = document.createElement('div');
-    partDiv.className = 'part-section';
-    partDiv.innerHTML = `
-      <div class="part-header">
-        ${wrapClearable('text', 'part-title-input', `PART ${count}：新篇章`, '分區標題')}
-        <div class="part-actions">
-          <button onclick="addDay(this)" class="btn-primary" style="padding: 5px 10px; font-size: 0.8rem; border-radius: 6px;">+ 新增天數</button>
-          <button onclick="deletePart(this)" class="btn-danger">刪除區塊</button>
-        </div>
-      </div>
-      <div class="days-container"></div>
-    `;
-    container.appendChild(partDiv);
-    addDay(partDiv.querySelector('.part-actions button'));
+    tripData = collectDataFromDOM();
+    const pKeys = Object.keys(tripData.parts);
+    const newPKey = `part${pKeys.length + 1}`;
+    tripData.parts[newPKey] = {
+      title: `PART ${pKeys.length + 1}：新篇章`,
+      days: {
+        day1: { title: "Day 1", base: "住宿地點", items: { item1: { type: "交通", detail: "項目", jpy: 0, twd: 0, note: "" } } }
+      }
+    };
+    renderUI(tripData);
   }
 
   function deletePart(btn) {
