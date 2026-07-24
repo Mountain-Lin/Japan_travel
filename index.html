@@ -633,6 +633,37 @@
       flex-wrap: wrap;
     }
 
+    /* 頂部檢視分頁按鈕群組樣式 */
+    .view-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+      justify-content: center;
+    }
+    .view-tab-btn {
+      background: #ffffff;
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(220, 195, 202, 0.1);
+      transition: all 0.2s;
+    }
+    .view-tab-btn:hover {
+      background: #fff0f3;
+      color: #e65c7b;
+      border-color: #ffd1d5;
+    }
+    .view-tab-btn.active {
+      background: linear-gradient(135deg, #ff758c, #ff7eb3);
+      color: white;
+      border: none;
+      box-shadow: 0 3px 10px rgba(255, 117, 140, 0.3);
+    }
+
     /* 響應式手機優化調整 */
     @media (max-width: 768px) {
       .top-panel { padding: 10px 12px; }
@@ -671,52 +702,63 @@
     </div>
   </div>
 
-  <!-- 航班與出國資訊面板 (可點標題折疊) -->
-  <div class="flight-panel">
-    <div class="flight-panel-title" onclick="toggleFlightPanel()">
-      <span>✈️ 航班與出國資訊</span>
-      <span id="flight-toggle-arrow" style="font-size: 0.8rem; color: #b07d89;">▾</span>
+  <!-- 頂部檢視分頁切換按鈕 -->
+  <div class="view-tabs">
+    <button class="view-tab-btn active" id="tab-btn-itinerary" onclick="switchView('itinerary')">🗓️ 行程與預算</button>
+    <button class="view-tab-btn" id="tab-btn-checklist" onclick="switchView('checklist')">🧳 行李檢核清單</button>
+  </div>
+
+  <!-- 行程與預算檢視容器 (含航班、行程、全域新增按鈕) -->
+  <div id="view-itinerary-container">
+    <!-- 航班與出國資訊面板 (可點標題折疊) -->
+    <div class="flight-panel">
+      <div class="flight-panel-title" onclick="toggleFlightPanel()">
+        <span>✈️ 航班與出國資訊</span>
+        <span id="flight-toggle-arrow" style="font-size: 0.8rem; color: #b07d89;">▾</span>
+      </div>
+      <div id="flight-content-grid" class="flight-grid" style="display: none;">
+        <!-- 去程航班 -->
+        <div class="flight-card">
+          <div class="flight-card-header">🛫 去程航班</div>
+          <div class="flight-inputs">
+            <div class="clearable-input-wrapper"><input type="date" id="flight-out-date" placeholder="日期" /></div>
+            <div class="clearable-input-wrapper"><input type="time" id="flight-out-time" placeholder="時間" /></div>
+            <div class="clearable-input-wrapper"><input type="text" id="flight-out-no" placeholder="班機" /></div>
+          </div>
+        </div>
+        <!-- 回程航班 -->
+        <div class="flight-card">
+          <div class="flight-card-header">🛬 回程航班</div>
+          <div class="flight-inputs">
+            <div class="clearable-input-wrapper"><input type="date" id="flight-in-date" placeholder="日期" /></div>
+            <div class="clearable-input-wrapper"><input type="time" id="flight-in-time" placeholder="時間" /></div>
+            <div class="clearable-input-wrapper"><input type="text" id="flight-in-no" placeholder="班機" /></div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div id="flight-content-grid" class="flight-grid" style="display: none;">
-      <!-- 去程航班 -->
-      <div class="flight-card">
-        <div class="flight-card-header">🛫 去程航班</div>
-        <div class="flight-inputs">
-          <div class="clearable-input-wrapper"><input type="date" id="flight-out-date" placeholder="日期" /></div>
-          <div class="clearable-input-wrapper"><input type="time" id="flight-out-time" placeholder="時間" /></div>
-          <div class="clearable-input-wrapper"><input type="text" id="flight-out-no" placeholder="班機" /></div>
-        </div>
-      </div>
-      <!-- 回程航班 -->
-      <div class="flight-card">
-        <div class="flight-card-header">🛬 回程航班</div>
-        <div class="flight-inputs">
-          <div class="clearable-input-wrapper"><input type="date" id="flight-in-date" placeholder="日期" /></div>
-          <div class="clearable-input-wrapper"><input type="time" id="flight-in-time" placeholder="時間" /></div>
-          <div class="clearable-input-wrapper"><input type="text" id="flight-in-no" placeholder="班機" /></div>
-        </div>
-      </div>
+
+    <!-- 行程容器 -->
+    <div id="itinerary-container"></div>
+
+    <!-- 全域新增行程按鈕 -->
+    <div class="global-actions">
+      <button class="btn-primary add-part-btn" onclick="addPart()" style="padding: 8px 16px; border-radius: 8px; width: auto; font-size: 0.85rem;">➕ 新增區塊 (PART)</button>
     </div>
   </div>
 
-  <!-- 行程容器 -->
-  <div id="itinerary-container"></div>
-
-  <!-- 全域新增行程按鈕 -->
-  <div class="global-actions">
-    <button class="btn-primary add-part-btn" onclick="addPart()" style="padding: 8px 16px; border-radius: 8px; width: auto; font-size: 0.85rem;">➕ 新增區塊 (PART)</button>
-  </div>
-
-  <!-- 行李檢核清單面板 (Checklist) -->
-  <div class="checklist-panel">
-    <div class="checklist-panel-title" onclick="toggleChecklistPanel()">
-      <span>🧳 行李檢核清單 (Checklist)</span>
-      <span id="checklist-toggle-arrow" style="font-size: 0.8rem; color: #b07d89;">▾</span>
-    </div>
-    <div id="checklist-content-container" style="display: none;">
-      <div id="checklist-categories-container"></div>
-      <div style="margin-top: 10px; text-align: center;">
-        <button class="add-row-btn" onclick="addChecklistCategory()">+ 新增行李分類</button>
+  <!-- 行李檢核清單檢視容器 (Checklist) -->
+  <div id="view-checklist-container" style="display: none;">
+    <div class="checklist-panel">
+      <div class="checklist-panel-title" onclick="toggleChecklistPanel()">
+        <span>🧳 行李檢核清單 (Checklist)</span>
+        <span id="checklist-toggle-arrow" style="font-size: 0.8rem; color: #b07d89;">▾</span>
+      </div>
+      <div id="checklist-content-container">
+        <div id="checklist-categories-container"></div>
+        <div style="margin-top: 10px; text-align: center;">
+          <button class="add-row-btn" onclick="addChecklistCategory()">+ 新增行李分類</button>
+        </div>
       </div>
     </div>
   </div>
@@ -797,6 +839,25 @@
     } else {
       container.style.display = 'none';
       arrow.style.transform = 'rotate(0deg)';
+    }
+  }
+
+  function switchView(viewName) {
+    const itineraryContainer = document.getElementById('view-itinerary-container');
+    const checklistContainer = document.getElementById('view-checklist-container');
+    const btnItinerary = document.getElementById('tab-btn-itinerary');
+    const btnChecklist = document.getElementById('tab-btn-checklist');
+
+    if (viewName === 'itinerary') {
+      itineraryContainer.style.display = 'block';
+      checklistContainer.style.display = 'none';
+      btnItinerary.classList.add('active');
+      btnChecklist.classList.remove('active');
+    } else if (viewName === 'checklist') {
+      itineraryContainer.style.display = 'none';
+      checklistContainer.style.display = 'block';
+      btnItinerary.classList.remove('active');
+      btnChecklist.classList.add('active');
     }
   }
 
